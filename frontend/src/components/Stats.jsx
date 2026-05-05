@@ -1,3 +1,5 @@
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+
 const STATS_IMG = "https://static.prod-images.emergentagent.com/jobs/3b2e6497-db95-4d04-a9ed-c34309b6d69c/images/4349f73d0e469cb080a14412f173b7680c92ad27742e7d261fca435e56e58a3f.png";
 
 const stats = [
@@ -8,15 +10,18 @@ const stats = [
 ];
 
 export default function Stats() {
+  const sectionRef = useScrollReveal();
+
   return (
     <section
       id="stats"
       data-testid="stats-section"
       className="py-24 lg:py-32 section-alt"
+      ref={sectionRef}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
-        <div className="mb-16 lg:mb-20">
+        <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
             className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
@@ -34,7 +39,7 @@ export default function Stats() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Stats grid */}
-          <div className="lg:col-span-2 grid grid-cols-2 border border-slate-100 rounded-xl overflow-hidden bg-white">
+          <div className="lg:col-span-2 grid grid-cols-2 border border-slate-100 rounded-xl overflow-hidden bg-white scroll-reveal delay-1">
             {stats.map((stat, i) => (
               <div
                 key={i}
@@ -54,7 +59,7 @@ export default function Stats() {
           </div>
 
           {/* Visual */}
-          <div className="hidden lg:block rounded-xl overflow-hidden h-full min-h-[320px] relative">
+          <div className="hidden lg:block rounded-xl overflow-hidden h-full min-h-[320px] relative scroll-reveal delay-2">
             <img
               src={STATS_IMG}
               alt="Data visualization"

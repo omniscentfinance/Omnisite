@@ -1,14 +1,18 @@
 import { TrendingUp, LineChart, Wallet, ArrowRight } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const TRADING_IMG = "https://images.pexels.com/photos/5833747/pexels-photo-5833747.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
 const SERVICES_BG = "https://static.prod-images.emergentagent.com/jobs/3b2e6497-db95-4d04-a9ed-c34309b6d69c/images/46d1a36e6306bba3357abf9d95a9f324bb4dd50d8d559fe0011002a779c27118.png";
 
 export default function Services() {
+  const sectionRef = useScrollReveal();
+
   return (
     <section
       id="services"
       data-testid="services-section"
       className="relative py-24 lg:py-32"
+      ref={sectionRef}
     >
       {/* Subtle background texture */}
       <div
@@ -19,7 +23,7 @@ export default function Services() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
-        <div className="mb-16 lg:mb-20">
+        <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
             className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
@@ -40,7 +44,7 @@ export default function Services() {
           {/* Card 1 - Orderflow Analysis (spans 2 cols) */}
           <div
             data-testid="service-orderflow-card"
-            className="service-card rounded-xl overflow-hidden lg:col-span-2 group"
+            className="service-card rounded-xl overflow-hidden lg:col-span-2 group scroll-reveal delay-1"
           >
             <div className="grid grid-cols-1 md:grid-cols-2">
               <div className="p-8 lg:p-12 flex flex-col justify-between">
@@ -80,7 +84,7 @@ export default function Services() {
           {/* Card 2 - Sviluppo Strategie */}
           <div
             data-testid="service-strategy-card"
-            className="service-card rounded-xl p-8 lg:p-12 flex flex-col justify-between"
+            className="service-card rounded-xl p-8 lg:p-12 flex flex-col justify-between scroll-reveal delay-2"
           >
             <div>
               <div className="w-12 h-12 rounded-lg bg-violet-50 flex items-center justify-center mb-6">
@@ -109,7 +113,7 @@ export default function Services() {
           {/* Card 3 - PAMM (full width, blue accent) */}
           <div
             data-testid="service-pamm-card"
-            className="service-card rounded-xl p-8 lg:p-12 lg:col-span-3 blue-glow group"
+            className="service-card rounded-xl p-8 lg:p-12 lg:col-span-3 blue-glow group scroll-reveal delay-3"
           >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
               <div className="lg:col-span-2">

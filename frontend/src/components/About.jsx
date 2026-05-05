@@ -1,17 +1,21 @@
 import { ArrowRight } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const TEAM_IMG = "https://images.unsplash.com/photo-1665224752561-85f4da9a5658?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwYnVzaW5lc3MlMjBwb3J0cmFpdCUyMG9mZmljZXxlbnwwfHx8fDE3Nzc5ODUxNDJ8MA&ixlib=rb-4.1.0&q=85";
 
 export default function About() {
+  const sectionRef = useScrollReveal();
+
   return (
     <section
       id="about"
       data-testid="about-section"
       className="py-24 lg:py-32 section-alt"
+      ref={sectionRef}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
-        <div className="mb-16 lg:mb-20">
+        <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
             className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
@@ -29,7 +33,7 @@ export default function About() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Image */}
-          <div className="relative rounded-xl overflow-hidden aspect-[4/5] max-h-[500px]">
+          <div className="relative rounded-xl overflow-hidden aspect-[4/5] max-h-[500px] scroll-reveal delay-1">
             <img
               src={TEAM_IMG}
               alt="Il team OMNISCENT"
@@ -47,7 +51,7 @@ export default function About() {
           </div>
 
           {/* Content */}
-          <div>
+          <div className="scroll-reveal delay-2">
             <p className="text-base lg:text-lg leading-relaxed text-slate-600 mb-6">
               OMNISCENT® nasce dalla passione per i mercati finanziari e dalla convinzione che
               ogni trader meriti una formazione di livello istituzionale. Il nostro approccio si

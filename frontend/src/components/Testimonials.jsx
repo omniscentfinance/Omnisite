@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const testimonials = [
   {
@@ -26,6 +27,7 @@ const testimonials = [
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
+  const sectionRef = useScrollReveal();
 
   const next = () => setCurrent((prev) => (prev + 1) % testimonials.length);
   const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
@@ -35,10 +37,11 @@ export default function Testimonials() {
       id="testimonials"
       data-testid="testimonials-section"
       className="py-24 lg:py-32"
+      ref={sectionRef}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
-        <div className="mb-16 lg:mb-20">
+        <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
             className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
@@ -55,7 +58,7 @@ export default function Testimonials() {
         </div>
 
         {/* Testimonial display */}
-        <div className="max-w-3xl">
+        <div className="max-w-3xl scroll-reveal delay-1">
           <div className="testimonial-quote pl-6 lg:pl-8 min-h-[200px] flex flex-col justify-center">
             <p
               className="text-xl lg:text-2xl font-light leading-relaxed text-slate-800 mb-8"

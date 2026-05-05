@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const faqs = [
   {
@@ -39,11 +40,13 @@ const faqs = [
 ];
 
 export default function FAQ() {
+  const sectionRef = useScrollReveal();
+
   return (
-    <section id="faq" data-testid="faq-section" className="py-24 lg:py-32">
+    <section id="faq" data-testid="faq-section" className="py-24 lg:py-32" ref={sectionRef}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
-        <div className="mb-16 lg:mb-20">
+        <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
             className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
@@ -59,7 +62,7 @@ export default function FAQ() {
           </h2>
         </div>
 
-        <div className="max-w-3xl">
+        <div className="max-w-3xl scroll-reveal delay-1">
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, i) => (
               <AccordionItem

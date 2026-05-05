@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import { Menu, X, ArrowRight, Instagram } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, ArrowRight } from "lucide-react";
+
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_orderflow-academy/artifacts/64cx6deb_1.png";
 
 const navLinks = [
   { label: "Servizi", href: "#services" },
@@ -40,10 +42,13 @@ export default function Header() {
             href="#hero"
             data-testid="nav-logo"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="font-heading text-lg lg:text-xl font-semibold tracking-[0.2em] text-slate-900"
-            style={{ fontFamily: "'Outfit', sans-serif" }}
+            className="flex items-center gap-3"
           >
-            OMNISCENT<sup className="text-xs">®</sup>
+            <img
+              src={LOGO_URL}
+              alt="OMNISCENT®"
+              className="header-logo-img"
+            />
           </a>
 
           {/* Desktop nav */}
