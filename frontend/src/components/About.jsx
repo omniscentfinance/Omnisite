@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
-const TEAM_IMG = "https://images.unsplash.com/photo-1665224752561-85f4da9a5658?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwYnVzaW5lc3MlMjBwb3J0cmFpdCUyMG9mZmljZXxlbnwwfHx8fDE3Nzc5ODUxNDJ8MA&ixlib=rb-4.1.0&q=85";
+const TEAM_IMG = "/team_photo.jpg";
 
 export default function About() {
   const sectionRef = useScrollReveal();
@@ -17,13 +17,13 @@ export default function About() {
         {/* Section header */}
         <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
-            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-400 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
           >
             La nostra missione
           </p>
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-slate-900"
+            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             data-testid="about-title"
           >
@@ -52,19 +52,19 @@ export default function About() {
 
           {/* Content */}
           <div className="scroll-reveal delay-2">
-            <p className="text-base lg:text-lg leading-relaxed text-slate-600 mb-6">
+            <p className="text-base lg:text-lg leading-relaxed text-slate-400 mb-6">
               OMNISCENT® nasce dalla passione per i mercati finanziari e dalla convinzione che
               ogni trader meriti una formazione di livello istituzionale. Il nostro approccio si
               basa sull'analisi dell'orderflow, uno strumento potente che permette di leggere
               le intenzioni reali del mercato.
             </p>
-            <p className="text-base lg:text-lg leading-relaxed text-slate-600 mb-6">
+            <p className="text-base lg:text-lg leading-relaxed text-slate-400 mb-6">
               Non ci limitiamo a insegnare una strategia: lavoriamo con te per sviluppare un
               metodo personalizzato, adatto al tuo stile di trading — che sia swing o scalping.
               Inoltre, offriamo la possibilità di creare e gestire fondi PAMM, aprendo la strada
               alla gestione professionale del capitale.
             </p>
-            <p className="text-base lg:text-lg leading-relaxed text-slate-600 mb-8">
+            <p className="text-base lg:text-lg leading-relaxed text-slate-400 mb-8">
               Il nostro obiettivo è semplice: portarti un passo avanti.
             </p>
             <a

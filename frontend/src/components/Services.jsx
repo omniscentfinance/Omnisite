@@ -19,19 +19,19 @@ export default function Services() {
         className="absolute inset-0 opacity-30 bg-cover bg-center"
         style={{ backgroundImage: `url(${SERVICES_BG})` }}
       />
-      <div className="absolute inset-0 bg-white/90" />
+      <div className="absolute inset-0 bg-[#09090B]/95" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
         <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
-            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-400 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
           >
             Cosa offriamo
           </p>
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-slate-900"
+            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             data-testid="services-title"
           >
@@ -49,16 +49,16 @@ export default function Services() {
             <div className="grid grid-cols-1 md:grid-cols-2">
               <div className="p-8 lg:p-12 flex flex-col justify-between">
                 <div>
-                  <div className="w-12 h-12 rounded-lg bg-violet-50 flex items-center justify-center mb-6">
-                    <TrendingUp className="text-violet-900" size={24} />
+                  <div className="w-12 h-12 rounded-lg bg-violet-900/30 flex items-center justify-center mb-6">
+                    <TrendingUp className="text-violet-400" size={24} />
                   </div>
                   <h3
-                    className="text-2xl sm:text-3xl font-medium tracking-tight text-violet-900 mb-4"
+                    className="text-2xl sm:text-3xl font-medium tracking-tight text-violet-300 mb-4"
                     style={{ fontFamily: "'Outfit', sans-serif" }}
                   >
                     Analisi dell'Orderflow
                   </h3>
-                  <p className="text-slate-600 leading-relaxed mb-6">
+                  <p className="text-slate-400 leading-relaxed mb-6">
                     Percorsi formativi basati sull'analisi dell'orderflow per comprendere le dinamiche
                     reali del mercato. Strategie sia per swing trading che per scalping.
                   </p>
@@ -66,7 +66,7 @@ export default function Services() {
                 <a
                   href="mailto:support@omniscent.space?subject=Richiesta%20corso%20Orderflow"
                   data-testid="service-orderflow-cta"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-violet-900 hover:text-violet-700 transition-colors group-hover:gap-3"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors group-hover:gap-3"
                 >
                   Richiedi informazioni <ArrowRight size={14} />
                 </a>
@@ -87,16 +87,16 @@ export default function Services() {
             className="service-card rounded-xl p-8 lg:p-12 flex flex-col justify-between scroll-reveal delay-2"
           >
             <div>
-              <div className="w-12 h-12 rounded-lg bg-violet-50 flex items-center justify-center mb-6">
-                <LineChart className="text-violet-900" size={24} />
+              <div className="w-12 h-12 rounded-lg bg-violet-900/30 flex items-center justify-center mb-6">
+                <LineChart className="text-violet-400" size={24} />
               </div>
               <h3
-                className="text-2xl font-medium tracking-tight text-violet-900 mb-4"
+                className="text-2xl font-medium tracking-tight text-violet-300 mb-4"
                 style={{ fontFamily: "'Outfit', sans-serif" }}
               >
                 Sviluppo Strategie Personali
               </h3>
-              <p className="text-slate-600 leading-relaxed mb-6">
+              <p className="text-slate-400 leading-relaxed mb-6">
                 Sviluppiamo insieme la tua strategia di trading personalizzata, adattata al tuo
                 profilo di rischio e ai tuoi obiettivi.
               </p>
@@ -104,7 +104,7 @@ export default function Services() {
             <a
               href="mailto:support@omniscent.space?subject=Richiesta%20sviluppo%20strategia"
               data-testid="service-strategy-cta"
-              className="inline-flex items-center gap-2 text-sm font-medium text-violet-900 hover:text-violet-700 transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors"
             >
               Scopri di più <ArrowRight size={14} />
             </a>
@@ -117,16 +117,16 @@ export default function Services() {
           >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
               <div className="lg:col-span-2">
-                <div className="w-12 h-12 rounded-lg bg-sky-50 flex items-center justify-center mb-6">
-                  <Wallet className="text-sky-700" size={24} />
+                <div className="w-12 h-12 rounded-lg bg-sky-900/30 flex items-center justify-center mb-6">
+                  <Wallet className="text-sky-400" size={24} />
                 </div>
                 <h3
-                  className="text-2xl sm:text-3xl font-medium tracking-tight text-violet-900 mb-4"
+                  className="text-2xl sm:text-3xl font-medium tracking-tight text-violet-300 mb-4"
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                 >
                   Creazione Fondi PAMM
                 </h3>
-                <p className="text-slate-600 leading-relaxed">
+                <p className="text-slate-400 leading-relaxed">
                   Ti guidiamo nella creazione e gestione di fondi PAMM (Percent Allocation Management Module),
                   permettendoti di gestire capitali di terzi con trasparenza e professionalità.
                 </p>

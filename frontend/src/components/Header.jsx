@@ -58,7 +58,7 @@ export default function Header() {
                 key={link.href}
                 data-testid={`nav-${link.href.replace("#", "")}-link`}
                 onClick={() => handleNavClick(link.href)}
-                className="text-sm font-medium text-slate-600 hover:text-violet-900 transition-colors tracking-wide"
+                className="text-sm font-medium text-slate-400 hover:text-violet-400 transition-colors tracking-wide"
                 style={{ fontFamily: "'Manrope', sans-serif" }}
               >
                 {link.label}
@@ -79,7 +79,7 @@ export default function Header() {
             className="lg:hidden p-2"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileOpen ? <X size={24} className="text-slate-300" /> : <Menu size={24} className="text-slate-300" />}
           </button>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function Header() {
       {mobileOpen && (
         <div
           data-testid="mobile-menu"
-          className="lg:hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 px-6 py-6"
+          className="lg:hidden bg-[#09090B]/95 backdrop-blur-xl border-t border-[#1E1E2A] px-6 py-6"
         >
           <nav className="flex flex-col gap-4">
             {navLinks.map((link) => (
@@ -96,7 +96,7 @@ export default function Header() {
                 key={link.href}
                 data-testid={`mobile-nav-${link.href.replace("#", "")}-link`}
                 onClick={() => handleNavClick(link.href)}
-                className="text-base font-medium text-slate-700 hover:text-violet-900 text-left py-2 transition-colors"
+                className="text-base font-medium text-slate-300 hover:text-violet-400 text-left py-2 transition-colors"
               >
                 {link.label}
               </button>

@@ -43,13 +43,13 @@ export default function Testimonials() {
         {/* Section header */}
         <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
-            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-400 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
           >
             Le voci dei nostri studenti
           </p>
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-slate-900"
+            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             data-testid="testimonials-title"
           >
@@ -61,7 +61,7 @@ export default function Testimonials() {
         <div className="max-w-3xl scroll-reveal delay-1">
           <div className="testimonial-quote pl-6 lg:pl-8 min-h-[200px] flex flex-col justify-center">
             <p
-              className="text-xl lg:text-2xl font-light leading-relaxed text-slate-800 mb-8"
+              className="text-xl lg:text-2xl font-light leading-relaxed text-slate-300 mb-8"
               style={{ fontFamily: "'Outfit', sans-serif" }}
               data-testid="testimonial-text"
             >
@@ -69,7 +69,7 @@ export default function Testimonials() {
             </p>
             <div>
               <p
-                className="text-sm font-semibold text-slate-900"
+                className="text-sm font-semibold text-white"
                 data-testid="testimonial-author"
               >
                 {testimonials[current].author}
@@ -83,14 +83,14 @@ export default function Testimonials() {
             <button
               data-testid="testimonial-prev-button"
               onClick={prev}
-              className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-violet-900 hover:text-violet-900 transition-colors"
+              className="w-10 h-10 rounded-full border border-[#1E1E2A] flex items-center justify-center text-slate-400 hover:border-violet-500 hover:text-violet-400 transition-colors"
             >
               <ChevronLeft size={18} />
             </button>
             <button
               data-testid="testimonial-next-button"
               onClick={next}
-              className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-600 hover:border-violet-900 hover:text-violet-900 transition-colors"
+              className="w-10 h-10 rounded-full border border-[#1E1E2A] flex items-center justify-center text-slate-400 hover:border-violet-500 hover:text-violet-400 transition-colors"
             >
               <ChevronRight size={18} />
             </button>

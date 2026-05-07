@@ -23,13 +23,13 @@ export default function Stats() {
         {/* Section header */}
         <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
-            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-400 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
           >
             I numeri parlano
           </p>
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-slate-900"
+            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             data-testid="stats-title"
           >
@@ -39,7 +39,7 @@ export default function Stats() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Stats grid */}
-          <div className="lg:col-span-2 grid grid-cols-2 border border-slate-100 rounded-xl overflow-hidden bg-white scroll-reveal delay-1">
+          <div className="lg:col-span-2 grid grid-cols-2 border border-[#1E1E2A] rounded-xl overflow-hidden bg-[#111113] scroll-reveal delay-1">
             {stats.map((stat, i) => (
               <div
                 key={i}
@@ -47,12 +47,12 @@ export default function Stats() {
                 className="stat-item p-8 lg:p-12"
               >
                 <p
-                  className="text-4xl lg:text-5xl font-light tracking-tight text-violet-900 mb-2"
+                  className="text-4xl lg:text-5xl font-light tracking-tight text-violet-400 mb-2"
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                 >
                   {stat.value}
                 </p>
-                <p className="text-sm font-semibold text-slate-900 mb-1">{stat.label}</p>
+                <p className="text-sm font-semibold text-slate-200 mb-1">{stat.label}</p>
                 <p className="text-xs text-slate-500">{stat.sublabel}</p>
               </div>
             ))}

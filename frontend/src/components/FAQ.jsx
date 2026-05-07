@@ -48,13 +48,13 @@ export default function FAQ() {
         {/* Section header */}
         <div className="mb-16 lg:mb-20 scroll-reveal">
           <p
-            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-sky-400 mb-4"
             style={{ fontFamily: "'Manrope', sans-serif" }}
           >
             Hai domande?
           </p>
           <h2
-            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-slate-900"
+            className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             data-testid="faq-title"
           >
@@ -68,18 +68,18 @@ export default function FAQ() {
               <AccordionItem
                 key={i}
                 value={`item-${i}`}
-                className="border-b border-slate-100"
+                className="border-b border-[#1E1E2A]"
                 data-testid={`faq-item-${i}`}
               >
                 <AccordionTrigger
-                  className="text-left text-base font-medium text-slate-900 hover:text-violet-900 hover:no-underline py-6"
+                  className="text-left text-base font-medium text-slate-200 hover:text-violet-400 hover:no-underline py-6"
                   style={{ fontFamily: "'Outfit', sans-serif" }}
                   data-testid={`faq-trigger-${i}`}
                 >
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent
-                  className="text-sm leading-relaxed text-slate-600 pb-6"
+                  className="text-sm leading-relaxed text-slate-400 pb-6"
                   data-testid={`faq-content-${i}`}
                 >
                   {faq.answer}

@@ -21,7 +21,7 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center pt-20">
         <div className="fade-in-up">
           <p
-            className="text-xs font-bold uppercase tracking-[0.25em] text-sky-600 mb-6"
+            className="text-xs font-bold uppercase tracking-[0.25em] text-sky-400 mb-6"
             style={{ fontFamily: "'Manrope', sans-serif" }}
           >
             OMNISCENT®
@@ -29,7 +29,7 @@ export default function Hero() {
         </div>
 
         <h1
-          className="fade-in-up delay-100 text-5xl sm:text-6xl lg:text-[5rem] font-light tracking-tighter leading-none text-slate-900 mb-6"
+          className="fade-in-up delay-100 text-5xl sm:text-6xl lg:text-[5rem] font-light tracking-tighter leading-none text-white mb-6"
           style={{ fontFamily: "'Outfit', sans-serif" }}
           data-testid="hero-tagline"
         >
@@ -37,7 +37,7 @@ export default function Hero() {
         </h1>
 
         <p
-          className="fade-in-up delay-200 text-base lg:text-lg leading-relaxed text-slate-600 max-w-2xl mx-auto mb-10"
+          className="fade-in-up delay-200 text-base lg:text-lg leading-relaxed text-slate-400 max-w-2xl mx-auto mb-10"
           style={{ fontFamily: "'Manrope', sans-serif" }}
           data-testid="hero-subtitle"
         >
@@ -71,7 +71,7 @@ export default function Hero() {
             onClick={() =>
               document.querySelector("#services")?.scrollIntoView({ behavior: "smooth" })
             }
-            className="animate-bounce text-slate-400 hover:text-violet-900 transition-colors"
+            className="animate-bounce text-slate-500 hover:text-violet-400 transition-colors"
           >
             <ChevronDown size={28} />
           </button>

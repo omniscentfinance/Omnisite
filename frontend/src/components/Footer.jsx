@@ -12,26 +12,26 @@ export default function Footer() {
       data-testid="contact-section"
       className="relative"
     >
-      {/* Contact form section (light bg) */}
-      <div className="py-24 lg:py-32 bg-white">
+      {/* Contact form section */}
+      <div className="py-24 lg:py-32 bg-[#09090B]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
             {/* Left - Info */}
             <div>
               <p
-                className="text-xs font-bold uppercase tracking-[0.2em] text-sky-600 mb-4"
+                className="text-xs font-bold uppercase tracking-[0.2em] text-sky-400 mb-4"
                 style={{ fontFamily: "'Manrope', sans-serif" }}
               >
                 Pronto a iniziare?
               </p>
               <h2
-                className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-slate-900 mb-6"
+                className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white mb-6"
                 style={{ fontFamily: "'Outfit', sans-serif" }}
                 data-testid="contact-title"
               >
                 Contattaci
               </h2>
-              <p className="text-base leading-relaxed text-slate-600 mb-8 max-w-md">
+              <p className="text-base leading-relaxed text-slate-400 mb-8 max-w-md">
                 Inviaci un messaggio per richiedere informazioni sui nostri percorsi formativi
                 o per la creazione del tuo fondo PAMM. Ti risponderemo entro 24 ore.
               </p>
@@ -40,7 +40,7 @@ export default function Footer() {
                 <a
                   href="mailto:support@omniscent.space"
                   data-testid="contact-email-button"
-                  className="inline-flex items-center gap-3 text-sm font-medium text-violet-900 hover:text-violet-700 transition-colors"
+                  className="inline-flex items-center gap-3 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors"
                 >
                   <Mail size={16} />
                   support@omniscent.space
@@ -50,7 +50,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   data-testid="contact-instagram-button"
-                  className="inline-flex items-center gap-3 text-sm font-medium text-violet-900 hover:text-violet-700 transition-colors"
+                  className="inline-flex items-center gap-3 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors"
                 >
                   <Instagram size={16} />
                   @omniscent_group

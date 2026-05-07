@@ -7,18 +7,19 @@
 :root {
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Manrope', sans-serif;
-  --violet-main: #4C1D95;
-  --violet-hover: #5B21B6;
-  --violet-light: #DDD6FE;
-  --blue-main: #0284C7;
-  --blue-hover: #0369A1;
-  --blue-glow: rgba(14, 165, 233, 0.5);
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #FAFAFA;
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --border-subtle: #F1F5F9;
+  --violet-main: #7C3AED;
+  --violet-hover: #8B5CF6;
+  --violet-light: #4C1D95;
+  --blue-main: #0EA5E9;
+  --blue-hover: #38BDF8;
+  --blue-glow: rgba(14, 165, 233, 0.4);
+  --bg-primary: #09090B;
+  --bg-secondary: #111113;
+  --bg-surface: #16161A;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --border-subtle: #1E1E2A;
 }
 
 body {
@@ -44,25 +45,25 @@ code {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 263 70% 35%;
+    --background: 0 0% 4%;
+    --foreground: 210 40% 96%;
+    --card: 240 6% 8%;
+    --card-foreground: 210 40% 96%;
+    --popover: 240 6% 8%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 263 70% 58%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --secondary: 240 4% 12%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 240 4% 12%;
+    --muted-foreground: 215 16% 57%;
+    --accent: 240 4% 12%;
+    --accent-foreground: 210 40% 96%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 263 70% 35%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 263 70% 58%;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -117,10 +118,10 @@ code {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--violet-light);
+  background: #2D2B3D;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {

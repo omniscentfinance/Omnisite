@@ -37,16 +37,16 @@ export default function ContactForm() {
     return (
       <div
         data-testid="contact-form-success"
-        className="bg-white rounded-xl border border-slate-100 p-8 lg:p-12 flex flex-col items-center justify-center min-h-[400px] text-center"
+        className="bg-[#111113] rounded-xl border border-[#1E1E2A] p-8 lg:p-12 flex flex-col items-center justify-center min-h-[400px] text-center"
       >
-        <CheckCircle className="text-emerald-500 mb-4" size={48} />
+        <CheckCircle className="text-emerald-400 mb-4" size={48} />
         <h3
-          className="text-2xl font-medium text-slate-900 mb-2"
+          className="text-2xl font-medium text-white mb-2"
           style={{ fontFamily: "'Outfit', sans-serif" }}
         >
           Messaggio inviato!
         </h3>
-        <p className="text-slate-500">Ti risponderemo entro 24 ore a {form.email || "la tua email"}.</p>
+        <p className="text-slate-400">Ti risponderemo entro 24 ore a {form.email || "la tua email"}.</p>
       </div>
     );
   }
@@ -55,10 +55,10 @@ export default function ContactForm() {
     <form
       onSubmit={handleSubmit}
       data-testid="contact-form"
-      className="bg-white rounded-xl border border-slate-100 p-8 lg:p-12"
+      className="bg-[#111113] rounded-xl border border-[#1E1E2A] p-8 lg:p-12"
     >
       <h3
-        className="text-2xl font-medium tracking-tight text-violet-900 mb-2"
+        className="text-2xl font-medium tracking-tight text-violet-300 mb-2"
         style={{ fontFamily: "'Outfit', sans-serif" }}
       >
         Scrivici direttamente
@@ -69,7 +69,7 @@ export default function ContactForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">
+          <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
             Nome
           </label>
           <input
@@ -80,11 +80,11 @@ export default function ContactForm() {
             onChange={handleChange}
             data-testid="contact-form-name"
             placeholder="Il tuo nome"
-            className="w-full px-4 py-3 rounded-md border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-900/20 focus:border-violet-900 transition-all"
+            className="w-full px-4 py-3 rounded-md border border-[#1E1E2A] bg-[#09090B] text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">
+          <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
             Email
           </label>
           <input
@@ -95,13 +95,13 @@ export default function ContactForm() {
             onChange={handleChange}
             data-testid="contact-form-email"
             placeholder="la-tua@email.com"
-            className="w-full px-4 py-3 rounded-md border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-900/20 focus:border-violet-900 transition-all"
+            className="w-full px-4 py-3 rounded-md border border-[#1E1E2A] bg-[#09090B] text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
           />
         </div>
       </div>
 
       <div className="mb-4">
-        <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">
+        <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
           Servizio
         </label>
         <select
@@ -109,7 +109,7 @@ export default function ContactForm() {
           value={form.service}
           onChange={handleChange}
           data-testid="contact-form-service"
-          className="w-full px-4 py-3 rounded-md border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-900/20 focus:border-violet-900 transition-all bg-white"
+          className="w-full px-4 py-3 rounded-md border border-[#1E1E2A] bg-[#09090B] text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all"
         >
           {serviceOptions.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -120,7 +120,7 @@ export default function ContactForm() {
       </div>
 
       <div className="mb-6">
-        <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">
+        <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
           Messaggio
         </label>
         <textarea
@@ -131,7 +131,7 @@ export default function ContactForm() {
           rows={4}
           data-testid="contact-form-message"
           placeholder="Descrivi la tua richiesta..."
-          className="w-full px-4 py-3 rounded-md border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-900/20 focus:border-violet-900 transition-all resize-none"
+          className="w-full px-4 py-3 rounded-md border border-[#1E1E2A] bg-[#09090B] text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all resize-none"
         />
       </div>
 
