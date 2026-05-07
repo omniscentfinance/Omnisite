@@ -1,7 +1,7 @@
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { useLang } from "@/context/LangContext";
 
-const HERO_IMAGE = "https://static.prod-images.emergentagent.com/jobs/3b2e6497-db95-4d04-a9ed-c34309b6d69c/images/d178dae7be160710b478bb8b1e99d87ea0eaf5499217e784aa8cf65dfdabddf1.png";
+const HERO_VIDEO = "/hero_video.mp4";
 
 export default function Hero() {
   const { t } = useLang();
@@ -12,10 +12,17 @@ export default function Hero() {
       data-testid="hero-section"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${HERO_IMAGE})` }}
-      />
+      {/* Video background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        data-testid="hero-video"
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src={HERO_VIDEO} type="video/mp4" />
+      </video>
       <div className="hero-overlay absolute inset-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center pt-20">
