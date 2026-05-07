@@ -59,6 +59,14 @@
   border-right: none;
 }
 
+.stat-item-light {
+  border-right: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
+}
+.stat-item-light:last-child {
+  border-right: none;
+}
+
 .testimonial-quote {
   position: relative;
 }

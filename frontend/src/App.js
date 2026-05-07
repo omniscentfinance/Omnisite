@@ -1,4 +1,5 @@
 import "@/App.css";
+import { LangProvider } from "@/context/LangContext";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
@@ -10,18 +11,20 @@ import Footer from "@/components/Footer";
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#09090B]" data-testid="app-root">
-      <Header />
-      <main>
-        <Hero />
-        <Services />
-        <Stats />
-        <Testimonials />
-        <About />
-        <FAQ />
-      </main>
-      <Footer />
-    </div>
+    <LangProvider>
+      <div className="min-h-screen bg-[#09090B]" data-testid="app-root">
+        <Header />
+        <main>
+          <Hero />
+          <Services />
+          <Stats />
+          <Testimonials />
+          <About />
+          <FAQ />
+        </main>
+        <Footer />
+      </div>
+    </LangProvider>
   );
 }
 

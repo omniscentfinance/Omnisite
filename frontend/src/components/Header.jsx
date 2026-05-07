@@ -1,20 +1,22 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Globe } from "lucide-react";
+import { useLang } from "@/context/LangContext";
 
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_orderflow-academy/artifacts/64cx6deb_1.png";
 
-const navLinks = [
-  { label: "Servizi", href: "#services" },
-  { label: "Risultati", href: "#stats" },
-  { label: "Testimonianze", href: "#testimonials" },
-  { label: "Chi Siamo", href: "#about" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contatti", href: "#contact" },
-];
-
 export default function Header() {
+  const { t, lang, toggle } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { label: t.nav.services, href: "#services" },
+    { label: t.nav.results, href: "#stats" },
+    { label: t.nav.testimonials, href: "#testimonials" },
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.faq, href: "#faq" },
+    { label: t.nav.contact, href: "#contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -37,21 +39,15 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
           <a
             href="#hero"
             data-testid="nav-logo"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="flex items-center gap-3"
           >
-            <img
-              src={LOGO_URL}
-              alt="OMNISCENT®"
-              className="header-logo-img"
-            />
+            <img src={LOGO_URL} alt="OMNISCENT®" className="header-logo-img" />
           </a>
 
-          {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-8" data-testid="desktop-nav">
             {navLinks.map((link) => (
               <button
@@ -64,27 +60,43 @@ export default function Header() {
                 {link.label}
               </button>
             ))}
+            <button
+              data-testid="lang-toggle"
+              onClick={toggle}
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-white transition-colors uppercase tracking-wider border border-[#1E1E2A] px-3 py-1.5 rounded-md hover:border-violet-500/30"
+            >
+              <Globe size={13} />
+              {lang === "it" ? "EN" : "IT"}
+            </button>
             <a
               href="mailto:support@omniscent.space"
               data-testid="nav-cta-button"
               className="btn-primary px-6 py-2.5 rounded-md text-sm font-medium inline-flex items-center gap-2"
             >
-              Inizia ora <ArrowRight size={14} />
+              {t.nav.cta} <ArrowRight size={14} />
             </a>
           </nav>
 
-          {/* Mobile toggle */}
-          <button
-            data-testid="mobile-menu-toggle"
-            className="lg:hidden p-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X size={24} className="text-slate-300" /> : <Menu size={24} className="text-slate-300" />}
-          </button>
+          <div className="lg:hidden flex items-center gap-3">
+            <button
+              data-testid="lang-toggle-mobile"
+              onClick={toggle}
+              className="flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-white transition-colors uppercase tracking-wider border border-[#1E1E2A] px-2.5 py-1.5 rounded-md"
+            >
+              <Globe size={12} />
+              {lang === "it" ? "EN" : "IT"}
+            </button>
+            <button
+              data-testid="mobile-menu-toggle"
+              className="lg:hidden p-2"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X size={24} className="text-slate-300" /> : <Menu size={24} className="text-slate-300" />}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div
           data-testid="mobile-menu"
@@ -106,7 +118,7 @@ export default function Header() {
               data-testid="mobile-nav-cta-button"
               className="btn-primary px-6 py-3 rounded-md text-sm font-medium inline-flex items-center gap-2 justify-center mt-2"
             >
-              Inizia ora <ArrowRight size={14} />
+              {t.nav.cta} <ArrowRight size={14} />
             </a>
           </nav>
         </div>
