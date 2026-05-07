@@ -20,19 +20,19 @@ Landing page per azienda di formazione privata di trading OMNISCENT®, con font 
 - Header sticky con glass effect e navigazione smooth scroll
 - Hero section con immagine di sfondo, tagline "a step forward"
 - Servizi in bento grid (Orderflow, Strategie, PAMM con glow azzurro)
-- Statistiche con grid borders pattern e visual
+- Statistiche con sfondo bianco per massima leggibilità
 - Testimonianze con carousel navigabile
-- Chi Siamo con foto personalizzata del fondatore
+- Chi Siamo con foto personalizzata (crop sulla faccia)
 - FAQ con Shadcn Accordion
 - Footer con email, Instagram e link rapidi
 - Menu hamburger mobile responsive
 - Backend FastAPI con endpoint /api/health e /api/contact
-- Tutti i data-testid sugli elementi interattivi
-- **Dark theme completo** (sfondo nero #09090B)
+- **Dark theme completo** (sfondo nero #09090B, stats bianco)
 - **Logo personalizzato** nell'header e footer
 - **Animazioni scroll-based** con Intersection Observer
 - **Form di contatto inline** con invio al backend
-- Test 100% backend e frontend (3 iterazioni)
+- **Multilingua IT/EN** con toggle nell'header
+- Test 100% backend e frontend (4 iterazioni)
 
 ## Prioritized Backlog
 - P0: Logo personalizzato (quando disponibile)
