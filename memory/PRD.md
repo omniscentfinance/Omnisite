@@ -22,13 +22,17 @@ Landing page per azienda di formazione privata di trading OMNISCENT®, con font 
 - Servizi in bento grid (Orderflow, Strategie, PAMM con glow azzurro)
 - Statistiche con grid borders pattern e visual
 - Testimonianze con carousel navigabile
-- Chi Siamo con foto team
+- Chi Siamo con foto personalizzata del fondatore
 - FAQ con Shadcn Accordion
-- Footer dark con email, Instagram e link rapidi
+- Footer con email, Instagram e link rapidi
 - Menu hamburger mobile responsive
 - Backend FastAPI con endpoint /api/health e /api/contact
 - Tutti i data-testid sugli elementi interattivi
-- Test 100% backend e frontend
+- **Dark theme completo** (sfondo nero #09090B)
+- **Logo personalizzato** nell'header e footer
+- **Animazioni scroll-based** con Intersection Observer
+- **Form di contatto inline** con invio al backend
+- Test 100% backend e frontend (3 iterazioni)
 
 ## Prioritized Backlog
 - P0: Logo personalizzato (quando disponibile)
