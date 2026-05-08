@@ -37,9 +37,9 @@ export default function Services() {
                   </h3>
                   <p className="text-slate-400 leading-relaxed mb-6">{t.services.orderflow.desc}</p>
                 </div>
-                <a href="mailto:support@omniscent.space?subject=Richiesta%20corso%20Orderflow" data-testid="service-orderflow-cta" className="inline-flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors group-hover:gap-3">
+                <button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} data-testid="service-orderflow-cta" className="inline-flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors group-hover:gap-3">
                   {t.services.orderflow.cta} <ArrowRight size={14} />
-                </a>
+                </button>
               </div>
               <div className="relative h-64 md:h-auto overflow-hidden">
                 <img src={TRADING_IMG} alt="Trading setup" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -57,9 +57,9 @@ export default function Services() {
               </h3>
               <p className="text-slate-400 leading-relaxed mb-6">{t.services.strategy.desc}</p>
             </div>
-            <a href="mailto:support@omniscent.space?subject=Richiesta%20sviluppo%20strategia" data-testid="service-strategy-cta" className="inline-flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors">
+            <button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} data-testid="service-strategy-cta" className="inline-flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors">
               {t.services.strategy.cta} <ArrowRight size={14} />
-            </a>
+            </button>
           </div>
 
           <div data-testid="service-pamm-card" className="service-card rounded-xl p-8 lg:p-12 lg:col-span-3 blue-glow group scroll-reveal delay-3">
@@ -74,9 +74,9 @@ export default function Services() {
                 <p className="text-slate-400 leading-relaxed">{t.services.pamm.desc}</p>
               </div>
               <div className="flex lg:justify-end">
-                <a href="mailto:support@omniscent.space?subject=Richiesta%20creazione%20PAMM" data-testid="service-pamm-cta" className="btn-primary px-8 py-4 rounded-md text-sm font-medium inline-flex items-center gap-2">
+                <button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} data-testid="service-pamm-cta" className="btn-primary px-8 py-4 rounded-md text-sm font-medium inline-flex items-center gap-2">
                   {t.services.pamm.cta} <ArrowRight size={16} />
-                </a>
+                </button>
               </div>
             </div>
           </div>

@@ -34,9 +34,9 @@ export default function About() {
             <p className="text-base lg:text-lg leading-relaxed text-slate-400 mb-6">{t.about.p1}</p>
             <p className="text-base lg:text-lg leading-relaxed text-slate-400 mb-6">{t.about.p2}</p>
             <p className="text-base lg:text-lg leading-relaxed text-slate-400 mb-8">{t.about.p3}</p>
-            <a href="mailto:support@omniscent.space?subject=Richiesta%20informazioni" data-testid="about-cta-button" className="btn-primary px-8 py-4 rounded-md text-sm font-medium inline-flex items-center gap-2">
+            <button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} data-testid="about-cta-button" className="btn-primary px-8 py-4 rounded-md text-sm font-medium inline-flex items-center gap-2">
               {t.about.cta} <ArrowRight size={16} />
-            </a>
+            </button>
           </div>
         </div>
       </div>

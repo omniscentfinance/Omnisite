@@ -52,13 +52,13 @@ export default function Hero() {
         </p>
 
         <div className="fade-in-up delay-300 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a
-            href="mailto:support@omniscent.space?subject=Richiesta%20informazioni%20percorso"
+          <button
+            onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
             data-testid="hero-cta-button"
             className="btn-primary px-8 py-4 rounded-md text-sm font-medium inline-flex items-center gap-2"
           >
             {t.hero.cta} <ArrowRight size={16} />
-          </a>
+          </button>
           <button
             data-testid="hero-discover-button"
             onClick={() => document.querySelector("#services")?.scrollIntoView({ behavior: "smooth" })}

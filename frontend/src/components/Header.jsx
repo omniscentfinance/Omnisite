@@ -68,13 +68,13 @@ export default function Header() {
               <Globe size={13} />
               {lang === "it" ? "EN" : "IT"}
             </button>
-            <a
-              href="mailto:support@omniscent.space"
+            <button
+              onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
               data-testid="nav-cta-button"
               className="btn-primary px-6 py-2.5 rounded-md text-sm font-medium inline-flex items-center gap-2"
             >
               {t.nav.cta} <ArrowRight size={14} />
-            </a>
+            </button>
           </nav>
 
           <div className="lg:hidden flex items-center gap-3">
@@ -113,13 +113,13 @@ export default function Header() {
                 {link.label}
               </button>
             ))}
-            <a
-              href="mailto:support@omniscent.space"
+            <button
+              onClick={() => { setMobileOpen(false); document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' }); }}
               data-testid="mobile-nav-cta-button"
               className="btn-primary px-6 py-3 rounded-md text-sm font-medium inline-flex items-center gap-2 justify-center mt-2"
             >
               {t.nav.cta} <ArrowRight size={14} />
-            </a>
+            </button>
           </nav>
         </div>
       )}
