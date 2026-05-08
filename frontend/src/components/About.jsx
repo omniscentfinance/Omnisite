@@ -22,7 +22,7 @@ export default function About() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="relative rounded-xl overflow-hidden aspect-[4/5] max-h-[500px] scroll-reveal delay-1">
-            <img src={TEAM_IMG} alt="OMNISCENT Team" className="w-full h-full object-cover object-top" data-testid="about-image" />
+            <img src={TEAM_IMG} alt="OMNISCENT Team" className="w-full h-full object-cover object-[center_70%]" data-testid="about-image" />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-8">
               <p className="text-white text-xs font-bold uppercase tracking-[0.2em]" style={{ fontFamily: "'Manrope', sans-serif" }}>
                 OMNISCENT® Team
