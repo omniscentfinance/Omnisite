@@ -2,7 +2,7 @@ import { TrendingUp, LineChart, Wallet, ArrowRight } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useLang } from "@/context/LangContext";
 
-const TRADING_IMG = "https://images.pexels.com/photos/5833747/pexels-photo-5833747.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
+const TRADING_IMG = "/trading_setup.jpg";
 const SERVICES_BG = "https://static.prod-images.emergentagent.com/jobs/3b2e6497-db95-4d04-a9ed-c34309b6d69c/images/46d1a36e6306bba3357abf9d95a9f324bb4dd50d8d559fe0011002a779c27118.png";
 
 export default function Services() {
