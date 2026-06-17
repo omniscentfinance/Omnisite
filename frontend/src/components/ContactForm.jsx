@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Send, CheckCircle, Loader2 } from "lucide-react";
-import axios from "axios";
+import emailjs from "@emailjs/browser";
 import { useLang } from "@/context/LangContext";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const EMAILJS_SERVICE_ID = "service_t060r7s";
+const EMAILJS_TEMPLATE_ID = "template_zw256co";
+const EMAILJS_PUBLIC_KEY = "Uk8xcFa3VjvjRAgAQ";
 
 export default function ContactForm() {
   const { t } = useLang();
@@ -16,7 +18,17 @@ export default function ContactForm() {
     e.preventDefault();
     setStatus("loading");
     try {
-      await axios.post(`${API}/contact`, form);
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          name: form.name,
+          email: form.email,
+          service: form.service,
+          message: form.message,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      );
       setStatus("success");
       setForm({ name: "", email: "", service: "info", message: "" });
       setTimeout(() => setStatus("idle"), 4000);
