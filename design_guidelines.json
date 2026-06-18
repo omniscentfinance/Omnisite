@@ -1,0 +1,197 @@
+{
+  "project_info": {
+    "name": "OMNISCENT® Landing Page",
+    "domain": "Trading Education & Investment Funds (PAMM)",
+    "audience": "Aspiring traders, investors, and professionals",
+    "language": "Italian",
+    "theme": "Light",
+    "archetype": "Archetype 4 (Swiss & High-Contrast) + Elegant Accent Overlay"
+  },
+  "design_philosophy": {
+    "core_principles": [
+      "Tension over symmetry. Avoid center-everything diseases.",
+      "Minimal, elegant, and professional. Deep contrast between stark white backgrounds and rich deep violet.",
+      "Use 'Crystal Glass' over images for a high-end luxury feel.",
+      "Generous spacing: Let the content breathe using Tailwind's p-12 to p-32 scales."
+    ],
+    "anti_patterns": [
+      "No generic purple-to-blue gradients.",
+      "No 'Inter' or generic sans fonts for headings.",
+      "No full-screen dark overlays that hide hero images (use max bg-black/40 or gradient overlays if needed, but since it's a light theme, use bg-white/60 with blur)."
+    ]
+  },
+  "color_palette": {
+    "background": {
+      "primary": "#FFFFFF",
+      "secondary": "#FAFAFA",
+      "glass": "bg-white/70 backdrop-blur-xl backdrop-saturate-150 border border-white/20"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#475569",
+      "muted": "#94A3B8",
+      "inverse": "#FFFFFF"
+    },
+    "brand": {
+      "violet": {
+        "main": "#4C1D95",
+        "hover": "#5B21B6",
+        "light": "#DDD6FE"
+      },
+      "blue": {
+        "main": "#0284C7",
+        "hover": "#0369A1",
+        "glow": "rgba(14, 165, 233, 0.5)"
+      }
+    },
+    "borders": {
+      "subtle": "#F1F5F9",
+      "focus": "#0284C7"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "heading": "'Outfit', sans-serif",
+      "body": "'Manrope', sans-serif"
+    },
+    "hierarchy": {
+      "h1": "text-5xl sm:text-6xl lg:text-[4rem] font-light tracking-tighter leading-none text-slate-900",
+      "h2": "text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-slate-900",
+      "h3": "text-2xl sm:text-3xl font-medium tracking-tight text-violet-900",
+      "overline": "text-xs font-bold uppercase tracking-[0.2em] text-sky-600",
+      "body": "text-base lg:text-lg leading-relaxed text-slate-600",
+      "small": "text-sm text-slate-500"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "Use generous spacing: py-24 or py-32 for sections. gap-8 or gap-12 for grids.",
+    "grid_strategy": {
+      "services": "Mode A: The 'Tetris' Grid. Asymmetric. Mix 2-column wide spans with 1-column tall spans to create tension. Do not use 3 equal boring columns.",
+      "stats": "Grid Borders pattern. Technical look with border-r and border-b on items."
+    },
+    "alignment": "Left-align paragraphs and dense content. Center-align only major hero text if it serves a cinematic purpose."
+  },
+  "component_rules": {
+    "buttons": {
+      "primary": "bg-violet-900 text-white hover:bg-violet-800 transition-colors px-8 py-4 rounded-md font-medium shadow-[0_8px_30px_rgba(76,29,149,0.2)]",
+      "secondary": "bg-transparent text-violet-900 border border-violet-900 hover:bg-violet-50 transition-colors px-8 py-4 rounded-md font-medium"
+    },
+    "cards": {
+      "style": "Flat, cardless feel or 1px subtle border (#F1F5F9). No heavy drop shadows. On hover, translate-y-1 with subtle shadow-lg.",
+      "padding": "p-8 or p-12 inside bordered containers to prevent collision."
+    },
+    "header": {
+      "style": "Sticky top-0 z-50 Crystal Glass (bg-white/80 backdrop-blur-xl border-b border-slate-100).",
+      "logo": "Text-based 'OMNISCENT®' using Outfit font, font-semibold, tracking-widest."
+    },
+    "navigation": "Desktop: Visible text links. Mobile: Hamburger menu.",
+    "data_testids": "MANDATORY on all buttons, links, and forms (e.g., data-testid='hero-cta-button', data-testid='nav-services-link')."
+  },
+  "media_assets": {
+    "hero": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/3b2e6497-db95-4d04-a9ed-c34309b6d69c/images/d178dae7be160710b478bb8b1e99d87ea0eaf5499217e784aa8cf65dfdabddf1.png",
+      "description": "Abstract 3D architectural composition, white marble and frosted glass with subtle deep violet and icy light blue lighting, representing 'a step forward' in finance.",
+      "usage_instructions": "Use as full-bleed background in the Hero section. Overlay with 'Crystal Glass' or a white-to-transparent gradient so dark text remains perfectly readable."
+    },
+    "services_background": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/3b2e6497-db95-4d04-a9ed-c34309b6d69c/images/46d1a36e6306bba3357abf9d95a9f324bb4dd50d8d559fe0011002a779c27118.png",
+      "description": "Elegant minimal geometric pattern, pure white background with faint violet and light blue reflections.",
+      "usage_instructions": "Use as a subtle textured background behind the Services ('Servizi') section."
+    },
+    "stats_visual": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/3b2e6497-db95-4d04-a9ed-c34309b6d69c/images/4349f73d0e469cb080a14412f173b7680c92ad27742e7d261fca435e56e58a3f.png",
+      "description": "Abstract data visualization art resembling orderflow.",
+      "usage_instructions": "Place adjacent to the 'Statistiche' section to break up text-heavy data."
+    },
+    "trading_environment": {
+      "url": "https://images.pexels.com/photos/5833747/pexels-photo-5833747.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "A home office setup featuring multiple monitors displaying trading charts and data analysis.",
+      "usage_instructions": "Use inside a bento grid cell in the Services section to visually represent the Trading/Orderflow courses."
+    },
+    "team_portrait": {
+      "url": "https://images.unsplash.com/photo-1665224752561-85f4da9a5658?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwYnVzaW5lc3MlMjBwb3J0cmFpdCUyMG9mZmljZXxlbnwwfHx8fDE3Nzc5ODUxNDJ8MA&ixlib=rb-4.1.0&q=85",
+      "description": "A man in a suit sitting in a chair in an elegant office.",
+      "usage_instructions": "Use in the 'Chi siamo/Team' section to establish professional credibility."
+    }
+  },
+  "content_structure": {
+    "sections": [
+      {
+        "id": "hero",
+        "type": "Hero",
+        "elements": [
+          "Tagline: 'a step forward' (H1, huge, elegant)",
+          "Subheadline: 'Formazione privata di trading. Analisi dell'orderflow e creazione di fondi PAMM.'",
+          "Primary CTA: 'Inizia il tuo percorso' (mailto:support@omniscent.space)",
+          "Secondary CTA: 'Scopri di più' (scrolls to services)"
+        ]
+      },
+      {
+        "id": "services",
+        "type": "Services Grid (Bento)",
+        "elements": [
+          "Section title: 'I Nostri Servizi'",
+          "Item 1: Analisi dell'Orderflow (Swing & Scalping) - use trading_environment image",
+          "Item 2: Sviluppo Strategie Personali",
+          "Item 3: Creazione Fondi PAMM - Highlighted card with light blue accent"
+        ]
+      },
+      {
+        "id": "stats",
+        "type": "Statistics Grid",
+        "elements": [
+          "Section title: 'Statistiche e Risultati'",
+          "Metrics: Performance, Studenti, PAMM creati. Use Grid Borders pattern."
+        ]
+      },
+      {
+        "id": "testimonials",
+        "type": "Testimonials",
+        "elements": [
+          "Section title: 'Testimonianze'",
+          "Format: Clean typography-focused quotes, no heavy cards. Just large text and author names."
+        ]
+      },
+      {
+        "id": "about",
+        "type": "About Us",
+        "elements": [
+          "Section title: 'Chi Siamo'",
+          "Content: Missione dell'azienda, foto del team (team_portrait image)."
+        ]
+      },
+      {
+        "id": "faq",
+        "type": "FAQ Accordion",
+        "elements": [
+          "Section title: 'Domande Frequenti'",
+          "Implementation: Shadcn Accordion component, minimal styling, 1px bottom border per item."
+        ]
+      },
+      {
+        "id": "contact",
+        "type": "Footer / Contact",
+        "elements": [
+          "Section title: 'Contatti'",
+          "Email: support@omniscent.space (mailto link)",
+          "Instagram: www.instagram.com/omniscent_group",
+          "Logo: OMNISCENT®"
+        ]
+      }
+    ]
+  },
+  "animation_guidelines": {
+    "scroll": "Smooth scrolling via Lenis is MANDATORY to ensure the premium feel.",
+    "interactions": "Hover states on all buttons and cards. Fade-up entrance animations for bento grid items staggered on scroll.",
+    "accessibility": "Respect prefers-reduced-motion."
+  },
+  "instructions_to_main_agent": [
+    "Install the following fonts: @fontsource/outfit, @fontsource/manrope.",
+    "Use Phosphor Icons or Lucide-react for elegant, thin-weight icons.",
+    "All complex interactions (FAQ accordion) MUST use Shadcn UI components but heavily styled to remove the default 'Vercel' look. Ensure pure white backgrounds and 1px #F1F5F9 borders.",
+    "Do NOT use HTML mailto in a complex form. Since all requests are via email, use direct `mailto:support@omniscent.space` links inside stylish buttons.",
+    "For the hero image, do not cover it with a completely dark overlay. The image is light and architectural; use a white gradient or a slight white blur overlay so dark text is readable.",
+    "Ensure the Instagram link opens in a new tab.",
+    "Implement `data-testid` on every interactable element as required."
+  ]
+}

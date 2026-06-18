@@ -1,0 +1,207 @@
+/* OMNISCENT Landing Page Styles - Dark Theme */
+
+.glass-header {
+  background: rgba(9, 9, 11, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid #1E1E2A;
+}
+
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(9, 9, 11, 0.45) 0%,
+    rgba(9, 9, 11, 0.6) 50%,
+    rgba(9, 9, 11, 0.85) 100%
+  );
+}
+
+.btn-primary {
+  background: #7C3AED;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 30px rgba(124, 58, 237, 0.25);
+}
+.btn-primary:hover {
+  background: #8B5CF6;
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #C4B5FD;
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  transition: all 0.3s ease;
+}
+.btn-secondary:hover {
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.7);
+  transform: translateY(-1px);
+}
+
+.service-card {
+  border: 1px solid #1E1E2A;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #111113;
+}
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.stat-item {
+  border-right: 1px solid #1E1E2A;
+  border-bottom: 1px solid #1E1E2A;
+}
+.stat-item:last-child {
+  border-right: none;
+}
+
+.stat-item-light {
+  border-right: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E2E8F0;
+}
+.stat-item-light:last-child {
+  border-right: none;
+}
+
+.testimonial-quote {
+  position: relative;
+}
+.testimonial-quote::before {
+  content: '\201C';
+  font-family: 'Outfit', sans-serif;
+  font-size: 6rem;
+  line-height: 1;
+  color: rgba(124, 58, 237, 0.2);
+  position: absolute;
+  top: -2rem;
+  left: -1rem;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.7s ease forwards;
+  opacity: 0;
+}
+
+.fade-in-up.visible {
+  opacity: 1;
+}
+
+/* Staggered delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Section subtle background */
+.section-alt {
+  background: #111113;
+}
+
+/* Blue accent glow */
+.blue-glow {
+  box-shadow: 0 0 40px rgba(14, 165, 233, 0.1);
+  border-color: rgba(14, 165, 233, 0.25);
+}
+
+/* Mobile hamburger */
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: #F1F5F9;
+  transition: all 0.3s ease;
+}
+
+/* Scroll reveal animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-reveal.delay-1 { transition-delay: 0.1s; }
+.scroll-reveal.delay-2 { transition-delay: 0.2s; }
+.scroll-reveal.delay-3 { transition-delay: 0.3s; }
+.scroll-reveal.delay-4 { transition-delay: 0.4s; }
+.scroll-reveal.delay-5 { transition-delay: 0.5s; }
+
+/* Scroll reveal from left */
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-reveal-left.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scroll reveal from right */
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-reveal-right.revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scale reveal */
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scroll-reveal-scale.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Header logo image */
+.header-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+@media (min-width: 1024px) {
+  .header-logo-img {
+    height: 42px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stat-item {
+    border-right: none;
+  }
+  .testimonial-quote::before {
+    font-size: 4rem;
+    top: -1.5rem;
+    left: -0.5rem;
+  }
+}
