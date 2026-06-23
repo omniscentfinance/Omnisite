@@ -8,6 +8,7 @@ import Testimonials from "@/components/Testimonials";
 import About from "@/components/About";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
+import Chatbot from "@/components/Chatbot";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <FAQ />
         </main>
         <Footer />
+        <Chatbot />
       </div>
     </LangProvider>
   );
