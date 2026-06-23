@@ -17,7 +17,7 @@ const PACKAGES = [
     badge: null,
     description: "Corsi completi + classi private in gruppo",
     price: "€ 2.500",
-    priceInstallments: "4 rate mensili",
+    priceInstallments: "€ 225 x 12 mesi",
     features: [
       "Accesso a tutti i corsi privati",
       "Classi private in gruppo",
@@ -27,7 +27,7 @@ const PACKAGES = [
       "Supporto prioritario",
     ],
     highlight: false,
-    installmentsLabel: "4 rate",
+    installmentsLabel: "12 rate",
     linkFull: "advanced_full",
     linkInstallments: "advanced_installments",
   },
