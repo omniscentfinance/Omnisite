@@ -124,7 +124,7 @@ export default function Chatbot() {
     ]);
     setStep("idle");
     setLead({ name: "", email: "", service: "", message: "" });
-  }, [lang]);
+  }, [lang, s.welcome, s.quickReplies]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
