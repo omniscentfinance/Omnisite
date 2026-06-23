@@ -34,7 +34,7 @@ const PACKAGES = [
   {
     id: "mentorship",
     icon: User,
-    label: "Mentorship 1to1",
+    label: "Master Mentor",
     badge: "Esclusivo",
     description: "3 mesi · 6h totali · chat privata diretta",
     price: "€ 1.500",
