@@ -137,6 +137,15 @@ export default function Header() {
             >
               {t.nav.cta} <ArrowRight size={14} />
             </button>
+            {user ? (
+              <a href="#/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 justify-center text-sm font-medium text-violet-400 border border-violet-500/30 px-6 py-3 rounded-md">
+                <UserCircle size={16} /> Area Riservata
+              </a>
+            ) : (
+              <a href="#/login" onClick={() => setMobileOpen(false)} className="flex items-center justify-center text-sm font-medium text-slate-300 border border-[#1E1E2A] px-6 py-3 rounded-md">
+                Accedi
+              </a>
+            )}
           </nav>
         </div>
       )}
