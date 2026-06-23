@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ArrowRight, Globe } from "lucide-react";
+import { Menu, X, ArrowRight, Globe, UserCircle } from "lucide-react";
 import { useLang } from "@/context/LangContext";
+import { useAuth } from "@/context/AuthContext";
 
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_orderflow-academy/artifacts/64cx6deb_1.png";
 
 export default function Header() {
   const { t, lang, toggle } = useLang();
+  const { user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -68,6 +70,21 @@ export default function Header() {
               <Globe size={13} />
               {lang === "it" ? "EN" : "IT"}
             </button>
+            {user ? (
+              <a
+                href="#/dashboard"
+                className="flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors border border-violet-500/30 px-4 py-2 rounded-md"
+              >
+                <UserCircle size={16} /> Area Riservata
+              </a>
+            ) : (
+              <a
+                href="#/login"
+                className="text-sm font-medium text-slate-400 hover:text-white transition-colors border border-[#1E1E2A] px-4 py-2 rounded-md hover:border-violet-500/30"
+              >
+                Accedi
+              </a>
+            )}
             <button
               onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
               data-testid="nav-cta-button"
