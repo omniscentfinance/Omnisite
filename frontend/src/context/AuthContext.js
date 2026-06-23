@@ -1,5 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
+
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minuti
+const ACTIVITY_EVENTS = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
 
 const AuthContext = createContext();
 
@@ -7,6 +10,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const timerRef = useRef(null);
+  const userRef = useRef(null);
 
   const fetchProfile = async (userId) => {
     const { data } = await supabase
@@ -17,21 +22,44 @@ export function AuthProvider({ children }) {
     setProfile(data);
   };
 
+  const resetTimer = () => {
+    if (!userRef.current) return;
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      supabase.auth.signOut();
+    }, INACTIVITY_TIMEOUT);
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      userRef.current = session?.user ?? null;
       if (session?.user) fetchProfile(session.user.id);
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      else setProfile(null);
+      userRef.current = session?.user ?? null;
+      if (session?.user) {
+        fetchProfile(session.user.id);
+        resetTimer();
+      } else {
+        setProfile(null);
+        clearTimeout(timerRef.current);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, resetTimer, { passive: true }));
+    return () => {
+      ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, resetTimer));
+      clearTimeout(timerRef.current);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const signUp = async (email, password, fullName) => {
     const { error } = await supabase.auth.signUp({
