@@ -20,6 +20,14 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
+// Mappa ID Payment Link -> piano. duration: "lifetime" o "3months".
+const PAYMENT_LINKS: Record<string, { plan: string; duration: string }> = {
+  "plink_1TlUUQQ86oCcQBKp5n94vDQH": { plan: "advanced", duration: "lifetime" },   // Advanced intero
+  "plink_1TlUe5Q86oCcQBKpE6drLMyD": { plan: "advanced", duration: "lifetime" },   // Advanced 12 rate
+  "plink_1TlUjZQ86oCcQBKp2fei8PTe": { plan: "mentorship", duration: "3months" },  // Master Mentor intero
+  "plink_1TlUpMQ86oCcQBKp3sfwRUFb": { plan: "mentorship", duration: "3months" },  // Master Mentor 3 rate
+};
+
 Deno.serve(async (req) => {
   const signature = req.headers.get("Stripe-Signature");
   const body = await req.text();
@@ -42,15 +50,19 @@ Deno.serve(async (req) => {
     const session = event.data.object as Stripe.Checkout.Session;
 
     const email = session.customer_details?.email ?? session.customer_email;
-    const plan = session.metadata?.plan;          // "advanced" | "mentorship"
-    const duration = session.metadata?.duration;  // "lifetime" | "3months"
+    const linkId = typeof session.payment_link === "string"
+      ? session.payment_link
+      : session.payment_link?.id;
+    const mapping = linkId ? PAYMENT_LINKS[linkId] : undefined;
 
-    if (!email || !plan) {
-      console.warn("Sessione senza email o metadata plan:", session.id);
+    if (!email || !mapping) {
+      console.warn("Sessione senza email o payment link sconosciuto:", session.id, linkId);
       return new Response(JSON.stringify({ received: true, skipped: true }), {
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    const { plan, duration } = mapping;
 
     // Calcola la scadenza: lifetime => null, altrimenti now + N mesi
     let expiresAt: string | null = null;
