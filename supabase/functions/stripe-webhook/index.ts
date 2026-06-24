@@ -109,6 +109,57 @@ Deno.serve(async (req) => {
     console.log(`Entitlement aggiornato: ${email} -> ${plan}`);
   }
 
+  // Rimborso: revoca l'entitlement corrispondente all'acquisto rimborsato.
+  if (event.type === "charge.refunded") {
+    const charge = event.data.object as Stripe.Charge;
+    const email = charge.billing_details?.email ?? charge.receipt_email;
+    const piId = typeof charge.payment_intent === "string"
+      ? charge.payment_intent
+      : charge.payment_intent?.id;
+
+    if (!email || !piId) {
+      console.warn("Rimborso senza email o payment_intent:", charge.id);
+      return new Response(JSON.stringify({ received: true, skipped: true }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Risale al payment link tramite la sessione di checkout collegata al PaymentIntent
+    let plan: string | undefined;
+    try {
+      const sessions = await stripe.checkout.sessions.list({ payment_intent: piId, limit: 1 });
+      const linkId = typeof sessions.data[0]?.payment_link === "string"
+        ? sessions.data[0].payment_link
+        : sessions.data[0]?.payment_link?.id;
+      plan = linkId ? PAYMENT_LINKS[linkId]?.plan : undefined;
+    } catch (e) {
+      console.error("Errore lookup sessione per rimborso:", e);
+    }
+
+    if (!plan) {
+      console.warn("Rimborso: impossibile determinare il piano per", charge.id);
+      return new Response(JSON.stringify({ received: true, skipped: true }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (plan === "advanced") updateData.has_advanced = false;
+    else if (plan === "mentorship") updateData.mentorship_expires_at = null;
+
+    const { error } = await supabase
+      .from("profiles")
+      .update(updateData)
+      .ilike("email", email);
+
+    if (error) {
+      console.error("Errore revoca entitlement (rimborso):", error);
+      return new Response("DB error", { status: 500 });
+    }
+
+    console.log(`Entitlement revocato per rimborso: ${email} -> ${plan}`);
+  }
+
   return new Response(JSON.stringify({ received: true }), {
     headers: { "Content-Type": "application/json" },
   });
