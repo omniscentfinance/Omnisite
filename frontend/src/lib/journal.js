@@ -23,6 +23,39 @@ export async function listMonthTrades(year, month, userId = null) {
   return data ?? [];
 }
 
+// Tutti i trade (solo data e risultato) per costruire la equity curve.
+export async function getAllTrades(userId = null) {
+  let q = supabase
+    .from("trades")
+    .select("trade_date, pnl_amount")
+    .order("trade_date", { ascending: true })
+    .order("created_at", { ascending: true });
+  if (userId) q = q.eq("user_id", userId);
+  const { data, error } = await q;
+  if (error) throw error;
+  return data ?? [];
+}
+
+// Balance iniziale del conto (dal profilo dell'utente).
+export async function getStartBalance(userId) {
+  const { data } = await supabase
+    .from("profiles")
+    .select("journal_start_balance")
+    .eq("id", userId)
+    .single();
+  return Number(data?.journal_start_balance || 0);
+}
+
+// Imposta il balance iniziale dell'utente corrente.
+export async function setStartBalance(amount) {
+  const { data: { user } } = await supabase.auth.getUser();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ journal_start_balance: amount })
+    .eq("id", user.id);
+  if (error) throw error;
+}
+
 // Elenco studenti (per il selettore admin).
 export async function listStudents() {
   const { data, error } = await supabase

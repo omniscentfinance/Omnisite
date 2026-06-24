@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { listMonthTrades, createTrade, deleteTrade, uploadImage, dateKey, listStudents } from "@/lib/journal";
 import { useAuth } from "@/context/AuthContext";
+import EquityChart from "./EquityChart";
 
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 const MONTH_NAMES = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
@@ -29,6 +30,7 @@ export default function TradingJournal() {
 
   // Sola lettura quando l'admin guarda il journal di un altro studente
   const readOnly = admin && viewUserId && viewUserId !== user?.id;
+  const effectiveUserId = admin ? (viewUserId || user?.id) : user?.id;
 
   useEffect(() => {
     if (admin) listStudents().then(setStudents).catch(() => setStudents([]));
@@ -112,6 +114,9 @@ export default function TradingJournal() {
           </div>
         ))}
       </div>
+
+      {/* Equity curve */}
+      <EquityChart userId={effectiveUserId} editable={!readOnly} refreshKey={trades.length} />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         {/* Calendario */}
@@ -241,7 +246,7 @@ function TradeCard({ trade, onDeleted, readOnly }) {
 }
 
 function TradeModal({ date, onClose, onSaved }) {
-  const [form, setForm] = useState({ asset: "", direction: "long", outcome: "win", pnl: "", description: "", lessons: "" });
+  const [form, setForm] = useState({ asset: "", direction: "long", outcome: "win", pnl: "", pnl_amount: "", description: "", lessons: "" });
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -267,6 +272,7 @@ function TradeModal({ date, onClose, onSaved }) {
         direction: form.direction,
         outcome: form.outcome,
         pnl: form.pnl.trim(),
+        pnl_amount: form.pnl_amount === "" ? 0 : parseFloat(String(form.pnl_amount).replace(",", ".")) || 0,
         description: form.description.trim(),
         lessons: form.lessons.trim(),
         image_url,
@@ -299,7 +305,12 @@ function TradeModal({ date, onClose, onSaved }) {
 
         <div className="grid grid-cols-2 gap-3 mb-3">
           <input value={form.asset} onChange={(e) => set("asset", e.target.value)} placeholder="Strumento (es. EUR/USD)" className={inputCls} />
-          <input value={form.pnl} onChange={(e) => set("pnl", e.target.value)} placeholder="P&L / R (es. +2.5R)" className={inputCls} />
+          <input value={form.pnl} onChange={(e) => set("pnl", e.target.value)} placeholder="R / note (es. +2.5R)" className={inputCls} />
+        </div>
+        <div className="mb-3">
+          <input value={form.pnl_amount} onChange={(e) => set("pnl_amount", e.target.value)} inputMode="decimal"
+            placeholder="Risultato in € (es. 250 oppure -120)" className={inputCls} />
+          <p className="text-xs text-slate-600 mt-1">Positivo se in profitto, negativo se in perdita. Aggiorna il grafico del conto.</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-3">
