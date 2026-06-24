@@ -26,6 +26,7 @@ const PAYMENT_LINKS: Record<string, { plan: string; duration: string }> = {
   "plink_1TlUe5Q86oCcQBKpE6drLMyD": { plan: "advanced", duration: "lifetime" },   // Advanced 12 rate
   "plink_1TlUjZQ86oCcQBKp2fei8PTe": { plan: "mentorship", duration: "3months" },  // Master Mentor intero
   "plink_1TlUpMQ86oCcQBKp3sfwRUFb": { plan: "mentorship", duration: "3months" },  // Master Mentor 3 rate
+  "plink_1TlnfFQ86oCcQBKpxIzXQ11H": { plan: "advanced", duration: "lifetime" },   // TEST 1€ (rimuovere dopo)
 };
 
 Deno.serve(async (req) => {
