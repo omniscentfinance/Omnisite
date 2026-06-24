@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Loader2, Search, Users } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getWatchedCountsByUser } from "@/lib/courses";
 
 const PLAN_BADGE = {
   master_plus: { label: "Master +", cls: "bg-violet-500/15 text-violet-300" },
@@ -26,16 +27,21 @@ function formatDate(iso) {
 
 export default function AdminStudents() {
   const [students, setStudents] = useState([]);
+  const [watchedCounts, setWatchedCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, full_name, email, has_advanced, mentorship_expires_at, is_admin, created_at")
-        .order("created_at", { ascending: false });
+      const [{ data, error }, counts] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, full_name, email, has_advanced, mentorship_expires_at, is_admin, created_at")
+          .order("created_at", { ascending: false }),
+        getWatchedCountsByUser(),
+      ]);
       if (!error) setStudents(data ?? []);
+      setWatchedCounts(counts);
       setLoading(false);
     })();
   }, []);
@@ -106,6 +112,7 @@ export default function AdminStudents() {
                   <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Nome</th>
                   <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Email</th>
                   <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Piano</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Video visti</th>
                   <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Mentorship fino al</th>
                   <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Registrato</th>
                 </tr>
@@ -121,6 +128,7 @@ export default function AdminStudents() {
                       <td className="px-4 py-3">
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${badge.cls}`}>{badge.label}</span>
                       </td>
+                      <td className="px-4 py-3 text-slate-300">{watchedCounts[s.id] || 0}</td>
                       <td className="px-4 py-3 text-slate-400">{plan === "mentorship" || plan === "master_plus" ? formatDate(s.mentorship_expires_at) : "—"}</td>
                       <td className="px-4 py-3 text-slate-500">{formatDate(s.created_at)}</td>
                     </tr>

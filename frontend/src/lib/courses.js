@@ -117,3 +117,34 @@ export async function deleteComment(id) {
   const { error } = await supabase.from("video_comments").delete().eq("id", id);
   if (error) throw error;
 }
+
+// ---- Progressi (video visti) ----
+// Segna un video come visto dall'utente corrente (no-op se già segnato).
+export async function markWatched(videoId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase
+    .from("video_progress")
+    .upsert({ user_id: user.id, video_id: videoId }, { onConflict: "user_id,video_id", ignoreDuplicates: true });
+}
+
+// Set degli ID video visti dall'utente corrente.
+export async function getWatchedVideoIds() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return new Set();
+  const { data, error } = await supabase
+    .from("video_progress")
+    .select("video_id")
+    .eq("user_id", user.id);
+  if (error) return new Set();
+  return new Set((data ?? []).map((r) => r.video_id));
+}
+
+// Admin: numero di video visti per ciascun utente -> Map(user_id -> count).
+export async function getWatchedCountsByUser() {
+  const { data, error } = await supabase.from("video_progress").select("user_id");
+  if (error) return {};
+  const counts = {};
+  for (const r of data ?? []) counts[r.user_id] = (counts[r.user_id] || 0) + 1;
+  return counts;
+}

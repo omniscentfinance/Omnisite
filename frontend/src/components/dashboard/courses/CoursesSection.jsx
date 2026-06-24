@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, Plus, Pencil, Trash2, PlayCircle, ListVideo, Loader2, X } from "lucide-react";
+import { ChevronLeft, Plus, Pencil, Trash2, PlayCircle, ListVideo, Loader2, X, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
   listPlaylists, createPlaylist, updatePlaylist, deletePlaylist,
   listVideos, createVideo, updateVideo, deleteVideo, parseYouTubeId,
+  markWatched, getWatchedVideoIds,
 } from "@/lib/courses";
 import Quiz from "./Quiz";
 import Comments from "./Comments";
@@ -115,15 +116,23 @@ function PlaylistModal({ playlist, onClose, onSaved }) {
 /* ---------- Dettaglio playlist (lista video) ---------- */
 function PlaylistView({ playlist, admin, onBack, onOpenVideo }) {
   const [videos, setVideos] = useState([]);
+  const [watched, setWatched] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { setVideos(await listVideos(playlist.id)); } catch { setVideos([]); }
+    try {
+      const [vids, w] = await Promise.all([listVideos(playlist.id), getWatchedVideoIds()]);
+      setVideos(vids);
+      setWatched(w);
+    } catch { setVideos([]); }
     setLoading(false);
   }, [playlist.id]);
   useEffect(() => { load(); }, [load]);
+
+  const watchedInPlaylist = videos.filter((v) => watched.has(v.id)).length;
+  const progress = videos.length ? Math.round((watchedInPlaylist / videos.length) * 100) : 0;
 
   return (
     <div className="max-w-4xl">
@@ -141,6 +150,18 @@ function PlaylistView({ playlist, admin, onBack, onOpenVideo }) {
         )}
       </div>
 
+      {!loading && videos.length > 0 && (
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Avanzamento</span>
+            <span className="text-xs text-slate-400">{watchedInPlaylist}/{videos.length} video · {progress}%</span>
+          </div>
+          <div className="h-2 rounded-full bg-[#1E1E2A] overflow-hidden">
+            <div className="h-full bg-emerald-500 transition-all" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="animate-spin text-violet-400" size={22} /></div>
       ) : videos.length === 0 ? (
@@ -155,7 +176,10 @@ function PlaylistView({ playlist, admin, onBack, onOpenVideo }) {
                 <PlayCircle size={22} className="absolute inset-0 m-auto text-white/90" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">{i + 1}. {v.title}</p>
+                <p className="text-sm font-medium text-white truncate flex items-center gap-1.5">
+                  {watched.has(v.id) && <CheckCircle2 size={14} className="text-emerald-400 flex-shrink-0" />}
+                  {i + 1}. {v.title}
+                </p>
                 {v.description && <p className="text-xs text-slate-500 line-clamp-1">{v.description}</p>}
               </div>
               {admin && (
@@ -212,6 +236,10 @@ function VideoModal({ playlistId, video, onClose, onSaved }) {
 
 /* ---------- Player video + quiz + commenti ---------- */
 function VideoView({ video, admin, onBack }) {
+  useEffect(() => {
+    if (!admin) markWatched(video.id); // gli admin non contano come "visualizzazione studente"
+  }, [video.id, admin]);
+
   return (
     <div className="max-w-3xl">
       <button onClick={onBack} className="flex items-center gap-1 text-sm text-slate-400 hover:text-white mb-4"><ChevronLeft size={16} /> Torna alla playlist</button>
