@@ -8,6 +8,7 @@ import PaymentModal from "@/components/dashboard/PaymentModal";
 import BookingCalendar from "@/components/dashboard/BookingCalendar";
 import AdminStudents from "@/components/dashboard/AdminStudents";
 import CoursesSection from "@/components/dashboard/courses/CoursesSection";
+import TradingJournal from "@/components/dashboard/journal/TradingJournal";
 
 const SERVICES = [
   { id: "corso-base", label: "Corso Base", icon: BookMarked, free: true, to: "/dashboard/corso-base" },
@@ -186,7 +187,7 @@ export default function Dashboard() {
           <Routes>
             <Route path="/" element={<DashboardHome onUpgrade={() => setPaymentOpen(true)} />} />
             <Route path="corso-base" element={<ComingSoon title="Corso Base" />} />
-            <Route path="trading-journal" element={<ComingSoon title="Trading Journal" />} />
+            <Route path="trading-journal" element={<TradingJournal />} />
             <Route
               path="corsi-privati"
               element={<ProtectedSection><CoursesSection /></ProtectedSection>}
