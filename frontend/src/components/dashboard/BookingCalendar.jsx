@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Clock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import { useAuth } from "@/context/AuthContext";
 import {
   getMonthBookings,
@@ -8,6 +9,10 @@ import {
   MONTHLY_LIMIT_MIN,
   SLOT_MINUTES,
 } from "@/lib/booking";
+
+const EMAILJS_SERVICE_ID = "service_t060r7s";
+const EMAILJS_TEMPLATE_ID = "template_zw256co";
+const EMAILJS_PUBLIC_KEY = "Uk8xcFa3VjvjRAgAQ";
 
 // Disponibilità settimanale del mentor (modificabile qui).
 // Chiave = giorno (0=Dom, 1=Lun ... 6=Sab). Valore = orari di inizio slot.
@@ -30,7 +35,7 @@ function slotKey(date, time) {
 }
 
 export default function BookingCalendar() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const today = new Date();
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [selectedDay, setSelectedDay] = useState(null);
@@ -100,7 +105,22 @@ export default function BookingCalendar() {
     setFeedback(null);
     try {
       await createBooking(start.toISOString());
-      setFeedback({ type: "success", msg: "Prenotazione confermata! Riceverai l'invito sul calendario." });
+      // Notifica di prenotazione via EmailJS (non blocca la conferma se fallisce)
+      const when = start.toLocaleString("it-IT", {
+        weekday: "long", day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit",
+      });
+      emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          name: profile?.full_name || "Cliente",
+          email: profile?.email || user?.email || "",
+          service: "Prenotazione Mentorship 1to1",
+          message: `Nuova sessione prenotata per: ${when} (durata ${SLOT_MINUTES} min).`,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY },
+      ).catch(() => {});
+      setFeedback({ type: "success", msg: "Prenotazione confermata! La trovi sul calendario." });
       await loadMonth();
     } catch (e) {
       setFeedback({ type: "error", msg: e?.message || "Errore durante la prenotazione. Riprova." });
