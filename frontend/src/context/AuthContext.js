@@ -84,7 +84,9 @@ export function AuthProvider({ children }) {
   };
 
   const isPlanActive = () => {
-    if (!profile?.plan || !profile?.plan_expires_at) return false;
+    if (!profile?.plan) return false;
+    // Nessuna scadenza = piano lifetime (es. Advanced)
+    if (!profile.plan_expires_at) return true;
     return new Date(profile.plan_expires_at) > new Date();
   };
 
