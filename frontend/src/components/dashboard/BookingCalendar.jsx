@@ -40,6 +40,16 @@ const WEEKLY_SLOTS = AVAILABLE_DAYS.reduce((acc, day) => {
   return acc;
 }, {});
 
+// Periodi di chiusura (ferie, ecc.) — date incluse, formato "YYYY-MM-DD".
+const BLOCKED_RANGES = [
+  { from: "2026-07-23", to: "2026-07-31" },
+];
+
+function isBlockedDate(date) {
+  const ymd = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  return BLOCKED_RANGES.some((r) => ymd >= r.from && ymd <= r.to);
+}
+
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 const MONTH_NAMES = [
   "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
@@ -102,7 +112,7 @@ export default function BookingCalendar() {
     const t = new Date(); t.setHours(0, 0, 0, 0);
     return date < t;
   };
-  const dayHasSlots = (date) => !isPast(date) && (WEEKLY_SLOTS[date.getDay()]?.length > 0);
+  const dayHasSlots = (date) => !isPast(date) && !isBlockedDate(date) && (WEEKLY_SLOTS[date.getDay()]?.length > 0);
 
   const changeMonth = (delta) => {
     setSelectedDay(null);
