@@ -6,16 +6,29 @@ function ymd(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-// Tutti i trade dell'utente nel mese (per pallini/contatori sul calendario).
-export async function listMonthTrades(year, month) {
+// Trade del mese. Se userId è passato (admin che guarda uno studente) filtra
+// per quell'utente; altrimenti RLS limita ai propri trade.
+export async function listMonthTrades(year, month, userId = null) {
   const start = ymd(new Date(year, month, 1));
   const end = ymd(new Date(year, month + 1, 1));
-  const { data, error } = await supabase
+  let q = supabase
     .from("trades")
     .select("*")
     .gte("trade_date", start)
     .lt("trade_date", end)
     .order("created_at", { ascending: true });
+  if (userId) q = q.eq("user_id", userId);
+  const { data, error } = await q;
+  if (error) throw error;
+  return data ?? [];
+}
+
+// Elenco studenti (per il selettore admin).
+export async function listStudents() {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, email")
+    .order("full_name", { ascending: true });
   if (error) throw error;
   return data ?? [];
 }

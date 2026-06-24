@@ -3,7 +3,8 @@ import {
   ChevronLeft, ChevronRight, Plus, X, Trash2, ImagePlus, Loader2,
   TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Minus,
 } from "lucide-react";
-import { listMonthTrades, createTrade, deleteTrade, uploadImage, dateKey } from "@/lib/journal";
+import { listMonthTrades, createTrade, deleteTrade, uploadImage, dateKey, listStudents } from "@/lib/journal";
+import { useAuth } from "@/context/AuthContext";
 
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 const MONTH_NAMES = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
@@ -15,18 +16,30 @@ const OUTCOMES = {
 };
 
 export default function TradingJournal() {
+  const { user, isAdmin } = useAuth();
+  const admin = isAdmin();
   const today = new Date();
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
   const [adding, setAdding] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [viewUserId, setViewUserId] = useState(null); // null = il proprio journal
+
+  // Sola lettura quando l'admin guarda il journal di un altro studente
+  const readOnly = admin && viewUserId && viewUserId !== user?.id;
+
+  useEffect(() => {
+    if (admin) listStudents().then(setStudents).catch(() => setStudents([]));
+  }, [admin]);
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { setTrades(await listMonthTrades(view.year, view.month)); } catch { setTrades([]); }
+    try { setTrades(await listMonthTrades(view.year, view.month, admin ? (viewUserId || user?.id) : null)); }
+    catch { setTrades([]); }
     setLoading(false);
-  }, [view.year, view.month]);
+  }, [view.year, view.month, admin, viewUserId, user?.id]);
   useEffect(() => { load(); }, [load]);
 
   const tradesByDay = trades.reduce((acc, t) => {
@@ -61,9 +74,25 @@ export default function TradingJournal() {
 
   return (
     <div className="max-w-5xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Trading Journal</h1>
-        <p className="text-slate-400 text-sm">Registra e analizza i tuoi trade giorno per giorno.</p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Trading Journal</h1>
+          <p className="text-slate-400 text-sm">
+            {readOnly ? "Stai visualizzando il journal di uno studente (sola lettura)." : "Registra e analizza i tuoi trade giorno per giorno."}
+          </p>
+        </div>
+        {admin && (
+          <select
+            value={viewUserId || user?.id || ""}
+            onChange={(e) => { setViewUserId(e.target.value); setSelectedDay(null); }}
+            className="px-3 py-2 rounded-md border border-[#1E1E2A] bg-[#111113] text-sm text-white focus:outline-none focus:border-violet-500 sm:w-64"
+          >
+            <option value={user?.id}>Il mio journal</option>
+            {students.filter((s) => s.id !== user?.id).map((s) => (
+              <option key={s.id} value={s.id}>{s.full_name || s.email}</option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* Stat cards */}
@@ -156,14 +185,16 @@ export default function TradingJournal() {
                 <p className="text-sm font-semibold text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
                   {DAY_NAMES[selectedDay.getDay()]} {selectedDay.getDate()} {MONTH_NAMES[selectedDay.getMonth()]}
                 </p>
-                <button onClick={() => setAdding(true)} className="w-8 h-8 rounded-lg bg-violet-600 hover:bg-violet-500 flex items-center justify-center text-white"><Plus size={16} /></button>
+                {!readOnly && (
+                  <button onClick={() => setAdding(true)} className="w-8 h-8 rounded-lg bg-violet-600 hover:bg-violet-500 flex items-center justify-center text-white"><Plus size={16} /></button>
+                )}
               </div>
 
               {dayTrades.length === 0 ? (
-                <p className="text-sm text-slate-500">Nessun report. Clicca + per aggiungerne uno.</p>
+                <p className="text-sm text-slate-500">{readOnly ? "Nessun report in questo giorno." : "Nessun report. Clicca + per aggiungerne uno."}</p>
               ) : (
                 <div className="space-y-3">
-                  {dayTrades.map((t) => <TradeCard key={t.id} trade={t} onDeleted={load} />)}
+                  {dayTrades.map((t) => <TradeCard key={t.id} trade={t} onDeleted={load} readOnly={readOnly} />)}
                 </div>
               )}
             </>
@@ -176,7 +207,7 @@ export default function TradingJournal() {
   );
 }
 
-function TradeCard({ trade, onDeleted }) {
+function TradeCard({ trade, onDeleted, readOnly }) {
   const o = OUTCOMES[trade.outcome] || OUTCOMES.be;
   const dir = trade.direction === "long";
   return (
@@ -195,7 +226,9 @@ function TradeCard({ trade, onDeleted }) {
             )}
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${o.bg} ${o.cls}`}>{o.label}</span>
           </div>
-          <button onClick={async () => { if (confirm("Eliminare il report?")) { await deleteTrade(trade.id); onDeleted(); } }} className="text-slate-600 hover:text-red-400 flex-shrink-0"><Trash2 size={13} /></button>
+          {!readOnly && (
+            <button onClick={async () => { if (confirm("Eliminare il report?")) { await deleteTrade(trade.id); onDeleted(); } }} className="text-slate-600 hover:text-red-400 flex-shrink-0"><Trash2 size={13} /></button>
+          )}
         </div>
         {trade.pnl && <p className="text-sm text-slate-300">P&L / R: <span className="font-medium text-white">{trade.pnl}</span></p>}
         {trade.description && <p className="text-sm text-slate-400 whitespace-pre-line">{trade.description}</p>}
