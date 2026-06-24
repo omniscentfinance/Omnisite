@@ -7,6 +7,7 @@ import ServiceCard from "@/components/dashboard/ServiceCard";
 import PaymentModal from "@/components/dashboard/PaymentModal";
 import BookingCalendar from "@/components/dashboard/BookingCalendar";
 import AdminStudents from "@/components/dashboard/AdminStudents";
+import CoursesSection from "@/components/dashboard/courses/CoursesSection";
 
 const SERVICES = [
   { id: "corso-base", label: "Corso Base", icon: BookMarked, free: true, to: "/dashboard/corso-base" },
@@ -188,7 +189,7 @@ export default function Dashboard() {
             <Route path="trading-journal" element={<ComingSoon title="Trading Journal" />} />
             <Route
               path="corsi-privati"
-              element={<ProtectedSection><ComingSoon title="Corsi Privati" /></ProtectedSection>}
+              element={<ProtectedSection><CoursesSection /></ProtectedSection>}
             />
             <Route
               path="indicatori-bot"
