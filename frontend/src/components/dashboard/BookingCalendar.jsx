@@ -14,15 +14,23 @@ const EMAILJS_SERVICE_ID = "service_t060r7s";
 const EMAILJS_TEMPLATE_ID = "template_zw256co";
 const EMAILJS_PUBLIC_KEY = "Uk8xcFa3VjvjRAgAQ";
 
-// Disponibilità settimanale del mentor (modificabile qui).
-// Chiave = giorno (0=Dom, 1=Lun ... 6=Sab). Valore = orari di inizio slot.
-const WEEKLY_SLOTS = {
-  1: ["18:00", "19:00", "20:00"], // Lunedì
-  2: ["18:00", "19:00", "20:00"], // Martedì
-  3: ["18:00", "19:00", "20:00"], // Mercoledì
-  4: ["18:00", "19:00", "20:00"], // Giovedì
-  5: ["17:00", "18:00", "19:00"], // Venerdì
-};
+// Finestra di disponibilità del mentor (modificabile qui).
+//   OPEN_HOUR  = prima ora prenotabile (inizio slot)
+//   CLOSE_HOUR = ultima ora prenotabile (inizio slot)
+//   AVAILABLE_DAYS = giorni prenotabili (0=Dom, 1=Lun ... 6=Sab)
+// Google Calendar rimuove poi gli slot già occupati.
+const OPEN_HOUR = 0;
+const CLOSE_HOUR = 23;
+const AVAILABLE_DAYS = [0, 1, 2, 3, 4, 5, 6];
+
+const HOURS = [];
+for (let h = OPEN_HOUR; h <= CLOSE_HOUR; h++) {
+  HOURS.push(`${String(h).padStart(2, "0")}:00`);
+}
+const WEEKLY_SLOTS = AVAILABLE_DAYS.reduce((acc, day) => {
+  acc[day] = HOURS;
+  return acc;
+}, {});
 
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 const MONTH_NAMES = [
