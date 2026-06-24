@@ -21,14 +21,14 @@ const supabase = createClient(
 );
 
 // Mappa ID Payment Link -> piano.
-//   duration: "lifetime" o "3months" (durata accesso al servizio).
-//   cycles:   numero di rate mensili (0 = pagamento unico, niente abbonamento).
-//             Se > 0, l'abbonamento Stripe viene cancellato dopo l'ultima rata.
-const PAYMENT_LINKS: Record<string, { plan: string; duration: string; cycles: number }> = {
-  "plink_1TlUUQQ86oCcQBKp5n94vDQH": { plan: "advanced", duration: "lifetime", cycles: 0 },   // Advanced intero
-  "plink_1TlUe5Q86oCcQBKpE6drLMyD": { plan: "advanced", duration: "lifetime", cycles: 12 },  // Advanced 12 rate
-  "plink_1TlUjZQ86oCcQBKp2fei8PTe": { plan: "mentorship", duration: "3months", cycles: 0 },  // Master Mentor intero
-  "plink_1TlUpMQ86oCcQBKp3sfwRUFb": { plan: "mentorship", duration: "3months", cycles: 3 },  // Master Mentor 3 rate
+//   plan:   "advanced" (lifetime) o "mentorship" (3 mesi).
+//   cycles: numero di rate mensili (0 = pagamento unico, niente abbonamento).
+//           Se > 0, l'abbonamento Stripe viene cancellato dopo l'ultima rata.
+const PAYMENT_LINKS: Record<string, { plan: string; cycles: number }> = {
+  "plink_1TlUUQQ86oCcQBKp5n94vDQH": { plan: "advanced", cycles: 0 },    // Advanced intero
+  "plink_1TlUe5Q86oCcQBKpE6drLMyD": { plan: "advanced", cycles: 12 },   // Advanced 12 rate
+  "plink_1TlUjZQ86oCcQBKp2fei8PTe": { plan: "mentorship", cycles: 0 },  // Master Mentor intero
+  "plink_1TlUpMQ86oCcQBKp3sfwRUFb": { plan: "mentorship", cycles: 3 },  // Master Mentor 3 rate
 };
 
 Deno.serve(async (req) => {
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { plan, duration, cycles } = mapping;
+    const { plan, cycles } = mapping;
 
     // Pagamento a rate: programma la cancellazione automatica dell'abbonamento
     // poco prima di quella che sarebbe la rata successiva all'ultima.
@@ -85,17 +85,20 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Calcola la scadenza: lifetime => null, altrimenti now + N mesi
-    let expiresAt: string | null = null;
-    if (duration === "3months") {
+    // Aggiorna solo l'entitlement acquistato, senza toccare l'altro:
+    // chi ha già advanced e compra mentorship (o viceversa) diventa "Master +".
+    const updateData: Record<string, unknown> = {};
+    if (plan === "advanced") {
+      updateData.has_advanced = true; // lifetime
+    } else if (plan === "mentorship") {
       const d = new Date();
       d.setMonth(d.getMonth() + 3);
-      expiresAt = d.toISOString();
+      updateData.mentorship_expires_at = d.toISOString();
     }
 
     const { error } = await supabase
       .from("profiles")
-      .update({ plan, plan_expires_at: expiresAt })
+      .update(updateData)
       .ilike("email", email);
 
     if (error) {
@@ -103,7 +106,7 @@ Deno.serve(async (req) => {
       return new Response("DB error", { status: 500 });
     }
 
-    console.log(`Piano aggiornato: ${email} -> ${plan} (scadenza: ${expiresAt ?? "lifetime"})`);
+    console.log(`Entitlement aggiornato: ${email} -> ${plan}`);
   }
 
   return new Response(JSON.stringify({ received: true }), {

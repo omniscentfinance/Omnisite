@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, Lock, LogOut, X } from "lucide-react";
+import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, Users, Lock, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV = [
@@ -9,12 +9,22 @@ const NAV = [
   { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false },
   { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false },
   { to: "/dashboard/calendario", label: "Prenota Sessione", icon: CalendarDays, mentorOnly: true },
+  { to: "/dashboard/studenti", label: "Studenti", icon: Users, adminOnly: true },
 ];
 
+const PLAN_LABELS = {
+  master_plus: "Master +",
+  advanced: "Advanced",
+  mentorship: "Master Mentor",
+  free: "Free",
+};
+
 export default function Sidebar({ onClose }) {
-  const { profile, signOut, isPlanActive, isMentorshipActive } = useAuth();
-  const active = isPlanActive();
+  const { profile, signOut, hasAdvanced, isMentorshipActive, isAdmin, effectivePlan } = useAuth();
+  const active = hasAdvanced();
   const mentor = isMentorshipActive();
+  const admin = isAdmin();
+  const plan = effectivePlan();
 
   return (
     <div className="flex flex-col h-full">
@@ -34,17 +44,22 @@ export default function Sidebar({ onClose }) {
       <div className="px-5 py-4 border-b border-[#1E1E2A]">
         <p className="text-sm font-medium text-white truncate">{profile?.full_name || "Utente"}</p>
         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full mt-1 inline-block ${
-          active ? "bg-emerald-500/10 text-emerald-400" : "bg-slate-800 text-slate-400"
+          plan === "master_plus"
+            ? "bg-violet-500/15 text-violet-300"
+            : plan !== "free"
+            ? "bg-emerald-500/10 text-emerald-400"
+            : "bg-slate-800 text-slate-400"
         }`}>
-          {active ? `Piano ${profile?.plan}` : "Piano Free"}
+          {`Piano ${PLAN_LABELS[plan]}`}
         </span>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly }) => {
+        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly, adminOnly }) => {
+          if (adminOnly && !admin) return null; // visibile solo agli admin
           if (mentorOnly && !mentor) return null; // visibile solo ai Master Mentor
-          const locked = !free && !mentorOnly && !active;
+          const locked = !free && !mentorOnly && !adminOnly && !active;
           return (
             <NavLink
               key={to}

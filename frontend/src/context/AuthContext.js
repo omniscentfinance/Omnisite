@@ -83,18 +83,34 @@ export function AuthProvider({ children }) {
     if (user) fetchProfile(user.id);
   };
 
-  const isPlanActive = () => {
-    if (!profile?.plan) return false;
-    // Nessuna scadenza = piano lifetime (es. Advanced)
-    if (!profile.plan_expires_at) return true;
-    return new Date(profile.plan_expires_at) > new Date();
+  const isAdmin = () => !!profile?.is_admin;
+
+  // Advanced è lifetime: una volta acquistato resta sempre. Gli admin hanno tutto.
+  const hasAdvanced = () => !!profile && (profile.has_advanced === true || isAdmin());
+
+  // Mentorship è a tempo (3 mesi). Gli admin hanno tutto.
+  const isMentorshipActive = () => {
+    if (!profile) return false;
+    if (isAdmin()) return true;
+    return !!profile.mentorship_expires_at && new Date(profile.mentorship_expires_at) > new Date();
   };
 
-  // True solo per chi ha il piano Master Mentor attivo (accesso al calendario 1to1)
-  const isMentorshipActive = () => isPlanActive() && profile?.plan === "mentorship";
+  // Piano "effettivo" calcolato dalle entitlement. Master + = advanced + mentorship insieme.
+  const effectivePlan = () => {
+    if (isAdmin()) return "master_plus";
+    const adv = profile?.has_advanced === true;
+    const ment = !!profile?.mentorship_expires_at && new Date(profile.mentorship_expires_at) > new Date();
+    if (adv && ment) return "master_plus";
+    if (ment) return "mentorship";
+    if (adv) return "advanced";
+    return "free";
+  };
+
+  // Retrocompat: "piano attivo" = ha almeno l'accesso ai servizi advanced.
+  const isPlanActive = () => hasAdvanced();
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, refreshProfile, isPlanActive, isMentorshipActive }}>
+    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, refreshProfile, isPlanActive, hasAdvanced, isMentorshipActive, isAdmin, effectivePlan }}>
       {children}
     </AuthContext.Provider>
   );

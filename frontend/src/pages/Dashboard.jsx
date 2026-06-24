@@ -6,6 +6,7 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import ServiceCard from "@/components/dashboard/ServiceCard";
 import PaymentModal from "@/components/dashboard/PaymentModal";
 import BookingCalendar from "@/components/dashboard/BookingCalendar";
+import AdminStudents from "@/components/dashboard/AdminStudents";
 
 const SERVICES = [
   { id: "corso-base", label: "Corso Base", icon: BookMarked, free: true, to: "/dashboard/corso-base" },
@@ -15,8 +16,8 @@ const SERVICES = [
 ];
 
 function DashboardHome({ onUpgrade }) {
-  const { profile, isPlanActive } = useAuth();
-  const active = isPlanActive();
+  const { profile, hasAdvanced } = useAuth();
+  const active = hasAdvanced();
   const firstName = profile?.full_name?.split(" ")[0] || "Utente";
 
   return (
@@ -79,9 +80,9 @@ function ComingSoon({ title }) {
 }
 
 function ProtectedSection({ children }) {
-  const { isPlanActive } = useAuth();
+  const { hasAdvanced } = useAuth();
   const navigate = useNavigate();
-  if (!isPlanActive()) {
+  if (!hasAdvanced()) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
         <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
@@ -125,6 +126,12 @@ function MentorSection({ children }) {
       </div>
     );
   }
+  return children;
+}
+
+function AdminSection({ children }) {
+  const { isAdmin } = useAuth();
+  if (!isAdmin()) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
@@ -190,6 +197,10 @@ export default function Dashboard() {
             <Route
               path="calendario"
               element={<MentorSection><BookingCalendar /></MentorSection>}
+            />
+            <Route
+              path="studenti"
+              element={<AdminSection><AdminStudents /></AdminSection>}
             />
           </Routes>
         </main>
