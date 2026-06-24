@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, Lock, LogOut, X } from "lucide-react";
+import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, Lock, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV = [
@@ -8,11 +8,13 @@ const NAV = [
   { to: "/dashboard/corso-base", label: "Corso Base", icon: BookMarked, free: true },
   { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false },
   { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false },
+  { to: "/dashboard/calendario", label: "Prenota Sessione", icon: CalendarDays, mentorOnly: true },
 ];
 
 export default function Sidebar({ onClose }) {
-  const { profile, signOut, isPlanActive } = useAuth();
+  const { profile, signOut, isPlanActive, isMentorshipActive } = useAuth();
   const active = isPlanActive();
+  const mentor = isMentorshipActive();
 
   return (
     <div className="flex flex-col h-full">
@@ -40,8 +42,9 @@ export default function Sidebar({ onClose }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV.map(({ to, label, icon: Icon, free, end }) => {
-          const locked = !free && !active;
+        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly }) => {
+          if (mentorOnly && !mentor) return null; // visibile solo ai Master Mentor
+          const locked = !free && !mentorOnly && !active;
           return (
             <NavLink
               key={to}

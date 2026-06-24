@@ -90,8 +90,11 @@ export function AuthProvider({ children }) {
     return new Date(profile.plan_expires_at) > new Date();
   };
 
+  // True solo per chi ha il piano Master Mentor attivo (accesso al calendario 1to1)
+  const isMentorshipActive = () => isPlanActive() && profile?.plan === "mentorship";
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, refreshProfile, isPlanActive }}>
+    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, refreshProfile, isPlanActive, isMentorshipActive }}>
       {children}
     </AuthContext.Provider>
   );

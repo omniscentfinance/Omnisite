@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/dashboard/Sidebar";
 import ServiceCard from "@/components/dashboard/ServiceCard";
 import PaymentModal from "@/components/dashboard/PaymentModal";
+import BookingCalendar from "@/components/dashboard/BookingCalendar";
 
 const SERVICES = [
   { id: "corso-base", label: "Corso Base", icon: BookMarked, free: true, to: "/dashboard/corso-base" },
@@ -102,6 +103,31 @@ function ProtectedSection({ children }) {
   return children;
 }
 
+function MentorSection({ children }) {
+  const { isMentorshipActive } = useAuth();
+  const navigate = useNavigate();
+  if (!isMentorshipActive()) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
+        <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
+          <BookOpen size={22} className="text-red-400" />
+        </div>
+        <h2 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          Sezione riservata
+        </h2>
+        <p className="text-slate-500 text-sm mb-4">Il calendario è disponibile solo con il piano Master Mentor.</p>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="text-sm text-violet-400 hover:text-violet-300 transition-colors"
+        >
+          ← Torna alla dashboard
+        </button>
+      </div>
+    );
+  }
+  return children;
+}
+
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -160,6 +186,10 @@ export default function Dashboard() {
             <Route
               path="indicatori-bot"
               element={<ProtectedSection><ComingSoon title="Indicatori & Bot" /></ProtectedSection>}
+            />
+            <Route
+              path="calendario"
+              element={<MentorSection><BookingCalendar /></MentorSection>}
             />
           </Routes>
         </main>
