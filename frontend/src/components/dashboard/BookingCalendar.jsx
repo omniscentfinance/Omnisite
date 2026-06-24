@@ -21,7 +21,7 @@ const EMAILJS_PUBLIC_KEY = "Uk8xcFa3VjvjRAgAQ";
 // Google Calendar rimuove poi gli slot già occupati.
 const OPEN_HOUR = 10;
 const CLOSE_HOUR = 22;
-const AVAILABLE_DAYS = [0, 1, 2, 3, 4, 5, 6];
+const AVAILABLE_DAYS = [1, 2, 3, 4, 5]; // Lun-Ven (chiuso sabato e domenica)
 // Pausa di chiusura (in minuti dalla mezzanotte): 16:30 -> 20:30.
 // Gli slot che si sovrappongono a questa fascia vengono esclusi.
 const BREAK_START_MIN = 16 * 60 + 30;
