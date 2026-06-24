@@ -20,12 +20,15 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
-// Mappa ID Payment Link -> piano. duration: "lifetime" o "3months".
-const PAYMENT_LINKS: Record<string, { plan: string; duration: string }> = {
-  "plink_1TlUUQQ86oCcQBKp5n94vDQH": { plan: "advanced", duration: "lifetime" },   // Advanced intero
-  "plink_1TlUe5Q86oCcQBKpE6drLMyD": { plan: "advanced", duration: "lifetime" },   // Advanced 12 rate
-  "plink_1TlUjZQ86oCcQBKp2fei8PTe": { plan: "mentorship", duration: "3months" },  // Master Mentor intero
-  "plink_1TlUpMQ86oCcQBKp3sfwRUFb": { plan: "mentorship", duration: "3months" },  // Master Mentor 3 rate
+// Mappa ID Payment Link -> piano.
+//   duration: "lifetime" o "3months" (durata accesso al servizio).
+//   cycles:   numero di rate mensili (0 = pagamento unico, niente abbonamento).
+//             Se > 0, l'abbonamento Stripe viene cancellato dopo l'ultima rata.
+const PAYMENT_LINKS: Record<string, { plan: string; duration: string; cycles: number }> = {
+  "plink_1TlUUQQ86oCcQBKp5n94vDQH": { plan: "advanced", duration: "lifetime", cycles: 0 },   // Advanced intero
+  "plink_1TlUe5Q86oCcQBKpE6drLMyD": { plan: "advanced", duration: "lifetime", cycles: 12 },  // Advanced 12 rate
+  "plink_1TlUjZQ86oCcQBKp2fei8PTe": { plan: "mentorship", duration: "3months", cycles: 0 },  // Master Mentor intero
+  "plink_1TlUpMQ86oCcQBKp3sfwRUFb": { plan: "mentorship", duration: "3months", cycles: 3 },  // Master Mentor 3 rate
 };
 
 Deno.serve(async (req) => {
@@ -62,7 +65,25 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { plan, duration } = mapping;
+    const { plan, duration, cycles } = mapping;
+
+    // Pagamento a rate: programma la cancellazione automatica dell'abbonamento
+    // poco prima di quella che sarebbe la rata successiva all'ultima.
+    if (cycles > 0 && session.subscription) {
+      const subId = typeof session.subscription === "string"
+        ? session.subscription
+        : session.subscription.id;
+      const d = new Date();
+      d.setMonth(d.getMonth() + cycles);
+      d.setDate(d.getDate() - 1); // margine di sicurezza di 1 giorno
+      const cancelAt = Math.floor(d.getTime() / 1000);
+      try {
+        await stripe.subscriptions.update(subId, { cancel_at: cancelAt });
+        console.log(`Abbonamento ${subId}: cancellazione programmata dopo ${cycles} rate.`);
+      } catch (e) {
+        console.error("Errore programmazione cancellazione abbonamento:", e);
+      }
+    }
 
     // Calcola la scadenza: lifetime => null, altrimenti now + N mesi
     let expiresAt: string | null = null;
