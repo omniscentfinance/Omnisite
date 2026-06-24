@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Clock, Loader2, CheckCircle2, AlertCircle } 
 import emailjs from "@emailjs/browser";
 import { useAuth } from "@/context/AuthContext";
 import {
-  getMonthBookings,
+  getGoogleBusy,
   getMyMonthMinutes,
   createBooking,
   MONTHLY_LIMIT_MIN,
@@ -39,7 +39,7 @@ export default function BookingCalendar() {
   const today = new Date();
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [selectedDay, setSelectedDay] = useState(null);
-  const [bookedKeys, setBookedKeys] = useState(new Set());
+  const [busy, setBusy] = useState([]); // [{ start: Date, end: Date }]
   const [usedMinutes, setUsedMinutes] = useState(0);
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
@@ -48,25 +48,26 @@ export default function BookingCalendar() {
   const loadMonth = useCallback(async () => {
     setLoading(true);
     try {
-      const [bookings, mine] = await Promise.all([
-        getMonthBookings(view.year, view.month),
+      const [busyRaw, mine] = await Promise.all([
+        getGoogleBusy(view.year, view.month),
         user ? getMyMonthMinutes(user.id, view.year, view.month) : Promise.resolve(0),
       ]);
-      const keys = new Set(
-        bookings.map((b) => {
-          const d = new Date(b.starts_at);
-          const time = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-          return slotKey(d, time);
-        }),
-      );
-      setBookedKeys(keys);
+      setBusy(busyRaw.map((b) => ({ start: new Date(b.start), end: new Date(b.end) })));
       setUsedMinutes(mine);
     } catch {
-      setBookedKeys(new Set());
+      setBusy([]);
     } finally {
       setLoading(false);
     }
   }, [view.year, view.month, user]);
+
+  // Uno slot è occupato se si sovrappone a un intervallo busy del calendario
+  const isSlotBusy = (date, time) => {
+    const [h, m] = time.split(":").map(Number);
+    const s = new Date(date); s.setHours(h, m, 0, 0);
+    const e = new Date(s.getTime() + SLOT_MINUTES * 60000);
+    return busy.some((b) => s < b.end && e > b.start);
+  };
 
   useEffect(() => { loadMonth(); }, [loadMonth]);
 
@@ -227,7 +228,7 @@ export default function BookingCalendar() {
               </p>
               <div className="space-y-2">
                 {slotsForSelected.map((time) => {
-                  const booked = bookedKeys.has(slotKey(selectedDay, time));
+                  const booked = isSlotBusy(selectedDay, time);
                   const disabled = booked || !canBook || booking;
                   return (
                     <button

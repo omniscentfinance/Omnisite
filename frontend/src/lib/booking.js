@@ -12,16 +12,15 @@ function monthRange(year, month) {
   return { start: start.toISOString(), end: end.toISOString() };
 }
 
-// Slot già prenotati nel mese (di tutti i clienti) -> per oscurare gli orari occupati
-export async function getMonthBookings(year, month) {
+// Intervalli occupati dal Google Calendar del mentor (riflette anche le
+// cancellazioni manuali): [{ start, end }, ...] in ISO.
+export async function getGoogleBusy(year, month) {
   const { start, end } = monthRange(year, month);
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("starts_at, duration_min")
-    .gte("starts_at", start)
-    .lt("starts_at", end);
+  const { data, error } = await supabase.functions.invoke("get-availability", {
+    body: { timeMin: start, timeMax: end },
+  });
   if (error) throw error;
-  return data ?? [];
+  return data?.busy ?? [];
 }
 
 // Minuti prenotati dall'utente corrente nel mese -> per il limite 2h
