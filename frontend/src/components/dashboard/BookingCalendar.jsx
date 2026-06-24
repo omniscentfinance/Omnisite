@@ -19,12 +19,20 @@ const EMAILJS_PUBLIC_KEY = "Uk8xcFa3VjvjRAgAQ";
 //   CLOSE_HOUR = ultima ora prenotabile (inizio slot)
 //   AVAILABLE_DAYS = giorni prenotabili (0=Dom, 1=Lun ... 6=Sab)
 // Google Calendar rimuove poi gli slot già occupati.
-const OPEN_HOUR = 0;
-const CLOSE_HOUR = 23;
+const OPEN_HOUR = 10;
+const CLOSE_HOUR = 22;
 const AVAILABLE_DAYS = [0, 1, 2, 3, 4, 5, 6];
+// Pausa di chiusura (in minuti dalla mezzanotte): 16:30 -> 20:30.
+// Gli slot che si sovrappongono a questa fascia vengono esclusi.
+const BREAK_START_MIN = 16 * 60 + 30;
+const BREAK_END_MIN = 20 * 60 + 30;
 
 const HOURS = [];
 for (let h = OPEN_HOUR; h <= CLOSE_HOUR; h++) {
+  const slotStart = h * 60;
+  const slotEnd = slotStart + SLOT_MINUTES;
+  // Escludi se lo slot si sovrappone alla pausa
+  if (slotStart < BREAK_END_MIN && slotEnd > BREAK_START_MIN) continue;
   HOURS.push(`${String(h).padStart(2, "0")}:00`);
 }
 const WEEKLY_SLOTS = AVAILABLE_DAYS.reduce((acc, day) => {
