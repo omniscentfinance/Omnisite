@@ -82,10 +82,10 @@ export async function listQuestions(videoId) {
   return data ?? [];
 }
 
-export async function createQuestion({ video_id, question, options, correct_index }) {
+export async function createQuestion({ video_id, question, options, correct_index, correct_indexes }) {
   const { error } = await supabase
     .from("quiz_questions")
-    .insert({ video_id, question, options, correct_index });
+    .insert({ video_id, question, options, correct_index, correct_indexes });
   if (error) throw error;
 }
 
