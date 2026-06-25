@@ -57,6 +57,7 @@ export default function EquityChart({ userId, editable, refreshKey }) {
   const current = data[data.length - 1]?.balance ?? startBalance;
   const pnlTotal = current - startBalance;
   const up = pnlTotal >= 0;
+  const roi = startBalance > 0 ? (pnlTotal / startBalance) * 100 : 0;
 
   const saveBalance = async () => {
     const val = parseFloat(draft.replace(",", "."));
@@ -95,6 +96,9 @@ export default function EquityChart({ userId, editable, refreshKey }) {
         <span className="text-2xl font-bold text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>{fmtMoney(current)}</span>
         <span className={`text-sm font-medium ${up ? "text-emerald-400" : "text-red-400"}`}>
           {up ? "+" : ""}{fmtMoney(pnlTotal)}
+        </span>
+        <span className={`text-sm font-semibold px-2 py-0.5 rounded-full ${up ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
+          ROI {up ? "+" : ""}{roi.toFixed(2)}%
         </span>
       </div>
 
