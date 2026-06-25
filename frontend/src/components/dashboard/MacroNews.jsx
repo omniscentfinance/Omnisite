@@ -1,29 +1,40 @@
-import { useEffect, useRef } from "react";
-import { CalendarClock } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { CalendarClock, LineChart } from "lucide-react";
 
-// Calendario economico di TradingView (gratuito, embeddabile).
-// Filtrato sugli eventi di importanza media/alta (i principali).
-export default function MacroNews() {
+// Inietta un widget TradingView (src + config) dentro un container.
+function TVWidget({ src, config }) {
   const ref = useRef(null);
-
+  const configKey = JSON.stringify(config);
   useEffect(() => {
-    const container = ref.current;
-    if (!container) return;
-    container.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      colorTheme: "dark",
-      isTransparent: true,
-      locale: "it",
-      importanceFilter: "0,1", // media e alta importanza
-      width: "100%",
-      height: 600,
-    });
-    container.appendChild(script);
-    return () => { container.innerHTML = ""; };
-  }, []);
+    const c = ref.current;
+    if (!c) return;
+    c.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+    const s = document.createElement("script");
+    s.src = src;
+    s.async = true;
+    s.innerHTML = configKey;
+    c.appendChild(s);
+    return () => { c.innerHTML = ""; };
+  }, [src, configKey]);
+  return <div ref={ref} className="tradingview-widget-container" />;
+}
+
+// Principali indicatori macro globali (simboli TradingView ECONOMICS).
+const INDICATORS = [
+  { label: "USA · Tasso d'interesse (Fed)", symbol: "ECONOMICS:USINTR" },
+  { label: "USA · Inflazione (CPI YoY)", symbol: "ECONOMICS:USIRYY" },
+  { label: "USA · Disoccupazione", symbol: "ECONOMICS:USUR" },
+  { label: "USA · Crescita PIL", symbol: "ECONOMICS:USGDPQQ" },
+  { label: "USA · Non-Farm Payrolls", symbol: "ECONOMICS:USNFP" },
+  { label: "Eurozona · Tasso d'interesse (BCE)", symbol: "ECONOMICS:EUINTR" },
+  { label: "Eurozona · Inflazione (CPI YoY)", symbol: "ECONOMICS:EUIRYY" },
+  { label: "Eurozona · Disoccupazione", symbol: "ECONOMICS:EUUR" },
+  { label: "Germania · Crescita PIL", symbol: "ECONOMICS:DEGDPQQ" },
+  { label: "Cina · Crescita PIL (YoY)", symbol: "ECONOMICS:CNGDPYY" },
+];
+
+export default function MacroNews() {
+  const [indicator, setIndicator] = useState(INDICATORS[0]);
 
   return (
     <div className="max-w-4xl">
@@ -34,11 +45,52 @@ export default function MacroNews() {
         <p className="text-slate-400 text-sm">I principali eventi macroeconomici globali, in tempo reale.</p>
       </div>
 
-      <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-3">
-        <div ref={ref} className="tradingview-widget-container" />
+      {/* Calendario economico */}
+      <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-3 mb-6">
+        <TVWidget
+          src="https://s3.tradingview.com/external-embedding/embed-widget-events.js"
+          config={{ colorTheme: "dark", isTransparent: true, locale: "it", importanceFilter: "0,1", width: "100%", height: 600 }}
+        />
       </div>
 
-      <p className="text-xs text-slate-600 mt-3">Dati forniti da TradingView. Gli orari sono nel tuo fuso locale.</p>
+      {/* Grafici degli indicatori */}
+      <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-5">
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+          <h2 className="text-base font-semibold text-white flex items-center gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+            <LineChart size={16} className="text-violet-400" /> Andamento indicatori
+          </h2>
+          <select
+            value={indicator.symbol}
+            onChange={(e) => setIndicator(INDICATORS.find((i) => i.symbol === e.target.value))}
+            className="px-3 py-2 rounded-md border border-[#1E1E2A] bg-[#09090B] text-sm text-white focus:outline-none focus:border-violet-500 max-w-full sm:w-72"
+          >
+            {INDICATORS.map((i) => (
+              <option key={i.symbol} value={i.symbol}>{i.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <TVWidget
+          src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js"
+          config={{
+            symbols: [[indicator.label, `${indicator.symbol}|5Y`]],
+            chartOnly: false,
+            width: "100%",
+            height: 400,
+            locale: "it",
+            colorTheme: "dark",
+            isTransparent: true,
+            autosize: false,
+            showVolume: false,
+            lineWidth: 2,
+            lineType: 0,
+            fontColor: "#64748b",
+            gridLineColor: "rgba(30,30,42,0.6)",
+          }}
+        />
+      </div>
+
+      <p className="text-xs text-slate-600 mt-3">Dati forniti da TradingView.</p>
     </div>
   );
 }
