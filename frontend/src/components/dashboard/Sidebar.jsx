@@ -1,10 +1,11 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, Users, Lock, LogOut, X } from "lucide-react";
+import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, CalendarClock, Users, Lock, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, free: true, end: true },
   { to: "/dashboard/trading-journal", label: "Trading Journal", icon: BarChart2, free: true },
+  { to: "/dashboard/news", label: "News Macro", icon: CalendarClock, free: true },
   { to: "/dashboard/corso-base", label: "Corso Base", icon: BookMarked, free: true },
   { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false },
   { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false },
