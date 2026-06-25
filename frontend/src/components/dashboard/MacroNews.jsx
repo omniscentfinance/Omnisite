@@ -71,21 +71,19 @@ export default function MacroNews() {
         </div>
 
         <TVWidget
-          src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js"
+          src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
           config={{
-            symbols: [[indicator.label, `${indicator.symbol}|5Y`]],
-            chartOnly: false,
-            width: "100%",
-            height: 400,
+            symbol: indicator.symbol,
+            interval: "M",
+            theme: "dark",
+            style: "3", // area
             locale: "it",
-            colorTheme: "dark",
-            isTransparent: true,
-            autosize: false,
-            showVolume: false,
-            lineWidth: 2,
-            lineType: 0,
-            fontColor: "#64748b",
-            gridLineColor: "rgba(30,30,42,0.6)",
+            width: "100%",
+            height: 420,
+            hide_side_toolbar: true,
+            hide_legend: false,
+            allow_symbol_change: false,
+            backgroundColor: "rgba(17,17,19,1)",
           }}
         />
       </div>
