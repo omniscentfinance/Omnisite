@@ -127,3 +127,10 @@ code {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--violet-main);
 }
+
+/* De-zoom proporzionale del contenuto dell'area riservata su mobile */
+@media (max-width: 640px) {
+  .dash-main {
+    zoom: 0.85;
+  }
+}

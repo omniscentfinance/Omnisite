@@ -185,7 +185,7 @@ export default function Dashboard() {
         </header>
 
         {/* Content */}
-        <main className="flex-1 px-4 lg:px-8 py-8">
+        <main className="dash-main flex-1 px-4 lg:px-8 py-8">
           <Routes>
             <Route path="/" element={<DashboardHome onUpgrade={() => setPaymentOpen(true)} />} />
             <Route path="corso-base" element={<ComingSoon title="Corso Base" />} />
