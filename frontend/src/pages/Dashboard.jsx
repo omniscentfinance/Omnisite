@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { Menu, BookOpen, BookMarked, BarChart2, Bot, Zap } from "lucide-react";
+import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, Zap } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/dashboard/Sidebar";
 import ServiceCard from "@/components/dashboard/ServiceCard";
@@ -14,6 +14,7 @@ import MacroNews from "@/components/dashboard/MacroNews";
 const SERVICES = [
   { id: "corso-base", label: "Corso Base", icon: BookMarked, free: true, to: "/dashboard/corso-base" },
   { id: "trading-journal", label: "Trading Journal", icon: BarChart2, free: true, to: "/dashboard/trading-journal" },
+  { id: "news", label: "News Macro", icon: CalendarClock, free: true, to: "/dashboard/news" },
   { id: "corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false, to: "/dashboard/corsi-privati" },
   { id: "indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false, to: "/dashboard/indicatori-bot" },
 ];
