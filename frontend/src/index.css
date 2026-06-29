@@ -133,4 +133,16 @@ code {
   .dash-main {
     zoom: 0.85;
   }
+  /* I widget TradingView non gestiscono bene lo zoom dell'antenato e finiscono
+     per sforare (aree bianche). Ripristino la scala reale sul loro contenitore. */
+  .dash-main .tradingview-widget-container {
+    zoom: 1.1765;
+  }
+}
+
+/* Forza i widget TradingView a non sforare il contenitore (mobile) */
+.tradingview-widget-container,
+.tradingview-widget-container iframe {
+  max-width: 100% !important;
+  width: 100% !important;
 }

@@ -34,7 +34,7 @@ function CalendarWidget() {
     c.appendChild(s);
     return () => { c.innerHTML = ""; };
   }, []);
-  return <div ref={ref} className="tradingview-widget-container" />;
+  return <div ref={ref} className="tradingview-widget-container w-full overflow-hidden" />;
 }
 
 function fmtDate(d) {
@@ -78,7 +78,7 @@ export default function MacroNews() {
       </div>
 
       {/* Calendario economico */}
-      <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-3 mb-6">
+      <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-3 mb-6 overflow-hidden">
         <CalendarWidget />
       </div>
 
