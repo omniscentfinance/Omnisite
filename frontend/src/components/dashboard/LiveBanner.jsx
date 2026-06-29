@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Radio, Lock, Pencil, X, ImagePlus, Loader2, ExternalLink } from "lucide-react";
+import { Radio, Lock, Pencil, X, ImagePlus, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { uploadImage } from "@/lib/journal";
 import { useAuth } from "@/context/AuthContext";
@@ -73,7 +73,7 @@ export default function LiveBanner({ onUpgrade }) {
 
   const handleClick = () => {
     if (!canAccess) { onUpgrade?.(); return; }
-    if (live?.join_url) window.open(live.join_url, "_blank", "noopener");
+    window.location.hash = "#/dashboard/live"; // sala live interna al sito
   };
 
   return (
@@ -140,7 +140,7 @@ export default function LiveBanner({ onUpgrade }) {
               <span className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
                 canAccess ? "bg-white text-black group-hover:bg-violet-100" : "bg-violet-600 text-white group-hover:bg-violet-500"
               }`}>
-                {canAccess ? (<>{cd?.live ? "Entra nella live" : "Vai alla live"} <ExternalLink size={14} /></>) : (<><Lock size={14} /> Sblocca l'accesso</>)}
+                {canAccess ? (<>{cd?.live ? "Entra nella live" : "Vai alla live"} <Radio size={14} /></>) : (<><Lock size={14} /> Sblocca l'accesso</>)}
               </span>
             </div>
           </div>
