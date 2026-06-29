@@ -7,6 +7,7 @@ import ServiceCard from "@/components/dashboard/ServiceCard";
 import PaymentModal from "@/components/dashboard/PaymentModal";
 import BookingCalendar from "@/components/dashboard/BookingCalendar";
 import AdminStudents from "@/components/dashboard/AdminStudents";
+import LiveBanner from "@/components/dashboard/LiveBanner";
 import CoursesSection from "@/components/dashboard/courses/CoursesSection";
 import TradingJournal from "@/components/dashboard/journal/TradingJournal";
 import MacroNews from "@/components/dashboard/MacroNews";
@@ -67,6 +68,9 @@ function DashboardHome({ onUpgrade }) {
           />
         ))}
       </div>
+
+      {/* Banner live giornaliera */}
+      <LiveBanner onUpgrade={onUpgrade} />
     </div>
   );
 }
