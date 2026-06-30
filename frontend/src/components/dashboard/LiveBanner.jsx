@@ -212,7 +212,8 @@ function EditLiveModal({ live, onClose, onSaved }) {
         <input type="datetime-local" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} className={`${inputCls} mb-3`} />
 
         <label className="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">Link della live</label>
-        <input value={joinUrl} onChange={(e) => setJoinUrl(e.target.value)} placeholder="https://... (YouTube, Zoom, ecc.)" className={`${inputCls} mb-4`} />
+        <input value={joinUrl} onChange={(e) => setJoinUrl(e.target.value)} placeholder="YouTube/Twitch/Vimeo/Jitsi (in-site) · Meet/Discord (esterno)" className={`${inputCls} mb-1`} />
+        <p className="text-xs text-slate-600 mb-4">In-site: YouTube, Twitch, Vimeo, Jitsi (meet.jit.si/...). Esterno: Google Meet, Discord, Zoom.</p>
 
         {err && <p className="text-sm text-red-400 mb-3">{err}</p>}
         <button onClick={save} disabled={saving} className="w-full py-2.5 rounded-md bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-medium flex items-center justify-center gap-2">
