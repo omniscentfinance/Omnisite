@@ -146,3 +146,33 @@ code {
   max-width: 100% !important;
   width: 100% !important;
 }
+
+/* Bordo luminoso rotante per la voce "Live Trading" in sidebar */
+.live-glow-wrap {
+  position: relative;
+  border-radius: 10px;
+  padding: 1.5px;
+  overflow: hidden;
+  background: #2A2A38;
+  box-shadow: 0 0 18px -5px rgba(168, 85, 247, 0.6);
+}
+.live-glow-wrap::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220%;
+  height: 320%;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 270deg, #a78bfa 315deg, #f0abfc 340deg, #ffffff 350deg, transparent 360deg);
+  animation: live-glow-spin 3s linear infinite;
+  z-index: 0;
+}
+.live-glow-wrap > a {
+  position: relative;
+  z-index: 1;
+  border-radius: 8.5px;
+}
+@keyframes live-glow-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}

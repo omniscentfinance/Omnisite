@@ -9,9 +9,9 @@ const NAV = [
   { to: "/dashboard/corso-base", label: "Corso Base", icon: BookMarked, free: true },
   { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false },
   { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false },
-  { to: "/dashboard/live-trading", label: "Live Trading", icon: Radio, free: false },
   { to: "/dashboard/calendario", label: "Prenota Sessione", icon: CalendarDays, mentorOnly: true },
   { to: "/dashboard/studenti", label: "Studenti", icon: Users, adminOnly: true },
+  { to: "/dashboard/live-trading", label: "Live Trading", icon: Radio, free: false, glow: true, spacer: true },
 ];
 
 const PLAN_LABELS = {
@@ -58,31 +58,40 @@ export default function Sidebar({ onClose }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly, adminOnly }) => {
+        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly, adminOnly, glow, spacer }) => {
           if (adminOnly && !admin) return null; // visibile solo agli admin
           if (mentorOnly && !mentor) return null; // visibile solo ai Master Mentor
           const locked = !free && !mentorOnly && !adminOnly && !active;
-          return (
+          const link = (
             <NavLink
-              key={to}
               to={to}
               end={end}
               onClick={onClose}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                  glow ? "bg-[#111113]" : ""
+                } ${
                   locked
-                    ? "text-slate-600 cursor-not-allowed pointer-events-none"
+                    ? `text-slate-500 cursor-not-allowed ${glow ? "" : "pointer-events-none"}`
                     : isActive
                     ? "bg-violet-500/10 text-violet-300 font-medium"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                    : glow ? "text-white hover:text-violet-200" : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`
               }
             >
-              <Icon size={16} className="flex-shrink-0" />
-              <span className="flex-1">{label}</span>
-              {locked && <Lock size={13} className="text-slate-600" />}
+              <Icon size={16} className={`flex-shrink-0 ${glow ? "text-red-500" : ""}`} />
+              <span className="flex-1 font-medium">{label}</span>
+              {locked && <Lock size={13} className="text-slate-500" />}
             </NavLink>
           );
+          if (glow) {
+            return (
+              <div key={to} className={`live-glow-wrap ${spacer ? "mt-4" : ""}`}>
+                {link}
+              </div>
+            );
+          }
+          return <div key={to}>{link}</div>;
         })}
       </nav>
 
