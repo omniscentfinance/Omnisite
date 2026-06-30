@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, CalendarClock, Users, Lock, LogOut, X } from "lucide-react";
+import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, CalendarClock, Radio, Users, Lock, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV = [
@@ -9,6 +9,7 @@ const NAV = [
   { to: "/dashboard/corso-base", label: "Corso Base", icon: BookMarked, free: true },
   { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false },
   { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false },
+  { to: "/dashboard/live-trading", label: "Live Trading", icon: Radio, free: false },
   { to: "/dashboard/calendario", label: "Prenota Sessione", icon: CalendarDays, mentorOnly: true },
   { to: "/dashboard/studenti", label: "Studenti", icon: Users, adminOnly: true },
 ];

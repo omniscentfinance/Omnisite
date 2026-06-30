@@ -9,6 +9,7 @@ import BookingCalendar from "@/components/dashboard/BookingCalendar";
 import AdminStudents from "@/components/dashboard/AdminStudents";
 import LiveBanner from "@/components/dashboard/LiveBanner";
 import LiveRoom from "@/components/dashboard/LiveRoom";
+import LiveTrading from "@/components/dashboard/LiveTrading";
 import CoursesSection from "@/components/dashboard/courses/CoursesSection";
 import TradingJournal from "@/components/dashboard/journal/TradingJournal";
 import MacroNews from "@/components/dashboard/MacroNews";
@@ -197,6 +198,7 @@ export default function Dashboard() {
             <Route path="trading-journal" element={<TradingJournal />} />
             <Route path="news" element={<MacroNews />} />
             <Route path="live" element={<ProtectedSection><LiveRoom /></ProtectedSection>} />
+            <Route path="live-trading" element={<ProtectedSection><LiveTrading /></ProtectedSection>} />
             <Route
               path="corsi-privati"
               element={<ProtectedSection><CoursesSection /></ProtectedSection>}

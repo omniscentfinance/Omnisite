@@ -74,11 +74,13 @@ Deno.serve(async (req) => {
   const data = await res.json();
   const items = data.items ?? [];
 
-  const ev = items.find((e: any) => (e.summary || "").trim().toLowerCase().startsWith("live"));
-  if (!ev) return json({ live: null });
+  const lives = items
+    .filter((e: any) => (e.summary || "").trim().toLowerCase().startsWith("live"))
+    .map((e: any) => ({
+      title: (e.summary || "").replace(/^live[\s:–-]*/i, "").trim() || "Live",
+      starts_at: e.start?.dateTime || e.start?.date || null,
+      join_url: eventLink(e),
+    }));
 
-  const title = (ev.summary || "").replace(/^live[\s:–-]*/i, "").trim() || "Live";
-  const starts_at = ev.start?.dateTime || ev.start?.date || null;
-
-  return json({ live: { title, starts_at, join_url: eventLink(ev) } });
+  return json({ live: lives[0] || null, lives });
 });

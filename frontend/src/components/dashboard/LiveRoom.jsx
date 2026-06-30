@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Radio, Loader2, ArrowLeft, Video, ExternalLink } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 
 // Converte il link della live in un URL embeddabile (YouTube / Twitch / Vimeo / Jitsi).
@@ -34,12 +34,17 @@ function isVideoCallLink(url) {
 
 export default function LiveRoom() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const paramUrl = params.get("u");
+  const paramTitle = params.get("t");
   const [live, setLive] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
+      // Live specifica passata dalla lista Live Trading
+      if (paramUrl) { setLive({ title: paramTitle || "Live", join_url: paramUrl }); setLoading(false); return; }
       let auto = null;
       try { const { data } = await supabase.functions.invoke("next-live"); auto = data?.live || null; } catch { /* fallback */ }
       const { data: manual } = await supabase.from("live_session").select("*").eq("id", 1).single();
@@ -47,7 +52,7 @@ export default function LiveRoom() {
       else setLive(manual);
     } catch { setLive(null); }
     setLoading(false);
-  }, []);
+  }, [paramUrl, paramTitle]);
   useEffect(() => { load(); }, [load]);
 
   const embed = toEmbed(live?.join_url);
