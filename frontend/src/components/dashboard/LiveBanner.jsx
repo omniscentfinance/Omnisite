@@ -8,6 +8,13 @@ async function getLive() {
   const { data } = await supabase.from("live_session").select("*").eq("id", 1).single();
   return data;
 }
+// Prossima live dal Google Calendar (titolo che inizia con "LIVE").
+async function getAutoLive() {
+  try {
+    const { data } = await supabase.functions.invoke("next-live");
+    return data?.live || null;
+  } catch { return null; }
+}
 async function saveLive(fields) {
   const { error } = await supabase.from("live_session").upsert({ id: 1, ...fields, updated_at: new Date().toISOString() });
   if (error) throw error;
@@ -60,7 +67,16 @@ export default function LiveBanner({ onUpgrade }) {
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { setLive(await getLive()); } catch { setLive(null); }
+    try {
+      const [auto, manual] = await Promise.all([getAutoLive(), getLive()]);
+      // La live dal calendario ha priorità su titolo/orario/link; la copertina
+      // resta quella impostata una volta dall'admin (gli eventi non hanno cover).
+      if (auto?.starts_at) {
+        setLive({ ...(manual || {}), title: auto.title, starts_at: auto.starts_at, join_url: auto.join_url });
+      } else {
+        setLive(manual);
+      }
+    } catch { setLive(null); }
     setLoading(false);
   }, []);
   useEffect(() => { load(); }, [load]);

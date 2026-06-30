@@ -40,8 +40,11 @@ export default function LiveRoom() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { data } = await supabase.from("live_session").select("*").eq("id", 1).single();
-      setLive(data);
+      let auto = null;
+      try { const { data } = await supabase.functions.invoke("next-live"); auto = data?.live || null; } catch { /* fallback */ }
+      const { data: manual } = await supabase.from("live_session").select("*").eq("id", 1).single();
+      if (auto?.join_url) setLive({ ...(manual || {}), title: auto.title, join_url: auto.join_url });
+      else setLive(manual);
     } catch { setLive(null); }
     setLoading(false);
   }, []);
