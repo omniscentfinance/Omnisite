@@ -194,7 +194,7 @@ export default function Dashboard() {
         <main className="dash-main flex-1 px-4 lg:px-8 py-8">
           <Routes>
             <Route path="/" element={<DashboardHome onUpgrade={() => setPaymentOpen(true)} />} />
-            <Route path="corso-base" element={<ComingSoon title="Corso Base" />} />
+            <Route path="corso-base" element={<CoursesSection section="base" onUpgrade={() => setPaymentOpen(true)} />} />
             <Route path="trading-journal" element={<TradingJournal />} />
             <Route path="news" element={<MacroNews />} />
             <Route path="live" element={<ProtectedSection><LiveRoom /></ProtectedSection>} />

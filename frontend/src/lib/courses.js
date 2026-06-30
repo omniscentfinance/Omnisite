@@ -18,18 +18,20 @@ export function parseYouTubeId(input) {
 }
 
 // ---- Playlist ----
-export async function listPlaylists() {
+// section: "private" (Corsi Privati, gated) | "base" (Corso Base, gratuito)
+export async function listPlaylists(section = "private") {
   const { data, error } = await supabase
     .from("playlists")
     .select("*")
+    .eq("section", section)
     .order("position", { ascending: true })
     .order("created_at", { ascending: true });
   if (error) throw error;
   return data ?? [];
 }
 
-export async function createPlaylist({ title, description }) {
-  const { error } = await supabase.from("playlists").insert({ title, description });
+export async function createPlaylist({ title, description, section = "private" }) {
+  const { error } = await supabase.from("playlists").insert({ title, description, section });
   if (error) throw error;
 }
 

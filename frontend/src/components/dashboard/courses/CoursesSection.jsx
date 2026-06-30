@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, Plus, Pencil, Trash2, PlayCircle, ListVideo, Loader2, X, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, Plus, Pencil, Trash2, PlayCircle, ListVideo, Loader2, X, CheckCircle2, Sparkles, Crown, ArrowRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
   listPlaylists, createPlaylist, updatePlaylist, deletePlaylist,
@@ -9,7 +9,12 @@ import {
 import Quiz from "./Quiz";
 import Comments from "./Comments";
 
-export default function CoursesSection() {
+const META = {
+  private: { title: "Corsi Privati", subtitle: "Le tue playlist formative avanzate." },
+  base: { title: "Corso Base", subtitle: "Le fondamenta del trading, gratis per te." },
+};
+
+export default function CoursesSection({ section = "private", onUpgrade }) {
   const { isAdmin } = useAuth();
   const admin = isAdmin();
   const [view, setView] = useState({ level: "playlists" }); // playlists | playlist | video
@@ -22,35 +27,59 @@ export default function CoursesSection() {
       onBack={() => setView({ level: "playlists" })}
       onOpenVideo={(video) => setView({ level: "video", video, playlist: view.playlist })} />;
   }
-  return <PlaylistsView admin={admin} onOpen={(playlist) => setView({ level: "playlist", playlist })} />;
+  return <PlaylistsView section={section} admin={admin} onUpgrade={onUpgrade} onOpen={(playlist) => setView({ level: "playlist", playlist })} />;
 }
 
 /* ---------- Lista playlist ---------- */
-function PlaylistsView({ admin, onOpen }) {
+function PlaylistsView({ section, admin, onUpgrade, onOpen }) {
+  const { hasAdvanced } = useAuth();
+  const isBase = section === "base";
+  const showPromo = isBase && !hasAdvanced(); // upsell solo per chi non ha già i premium
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null); // playlist obj or {} for new
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { setPlaylists(await listPlaylists()); } catch { setPlaylists([]); }
+    try { setPlaylists(await listPlaylists(section)); } catch { setPlaylists([]); }
     setLoading(false);
-  }, []);
+  }, [section]);
   useEffect(() => { load(); }, [load]);
 
   return (
     <div className="max-w-4xl">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Corsi Privati</h1>
-          <p className="text-slate-400 text-sm">Le tue playlist formative.</p>
+      {/* Hero catchy per il Corso Base */}
+      {isBase ? (
+        <div className="relative overflow-hidden rounded-2xl mb-6 p-6 sm:p-8 bg-gradient-to-br from-violet-700 via-violet-600 to-fuchsia-600">
+          <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-white/10 blur-2xl" />
+          <div className="relative flex items-start justify-between gap-4">
+            <div>
+              <span className="inline-flex items-center gap-1.5 bg-white/15 text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                <Sparkles size={12} /> Gratis · incluso nel tuo account
+              </span>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>Corso Base di Trading</h1>
+              <p className="text-white/80 text-sm max-w-md">Impara le fondamenta passo dopo passo. Quando sei pronto a fare il salto, i percorsi premium ti aspettano.</p>
+            </div>
+            {admin && (
+              <button onClick={() => setEditing({})} className="flex-shrink-0 flex items-center gap-2 text-sm font-medium bg-white text-violet-700 hover:bg-violet-50 px-4 py-2 rounded-md">
+                <Plus size={15} /> Playlist
+              </button>
+            )}
+          </div>
         </div>
-        {admin && (
-          <button onClick={() => setEditing({})} className="flex items-center gap-2 text-sm font-medium bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-md">
-            <Plus size={15} /> Nuova playlist
-          </button>
-        )}
-      </div>
+      ) : (
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{META[section].title}</h1>
+            <p className="text-slate-400 text-sm">{META[section].subtitle}</p>
+          </div>
+          {admin && (
+            <button onClick={() => setEditing({})} className="flex items-center gap-2 text-sm font-medium bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-md">
+              <Plus size={15} /> Nuova playlist
+            </button>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="animate-spin text-violet-400" size={22} /></div>
@@ -79,12 +108,32 @@ function PlaylistsView({ admin, onOpen }) {
         </div>
       )}
 
-      {editing && <PlaylistModal playlist={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load(); }} />}
+      {/* CTA premium (solo Corso Base, per chi non ha i premium) */}
+      {showPromo && (
+        <div className="mt-8 relative overflow-hidden rounded-2xl border border-violet-500/30 bg-gradient-to-br from-[#1a1430] to-[#111113] p-6 ring-1 ring-violet-500/20">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-lg bg-violet-500/15 flex items-center justify-center flex-shrink-0">
+                <Crown size={18} className="text-violet-300" />
+              </div>
+              <div>
+                <p className="text-white font-semibold mb-0.5" style={{ fontFamily: "'Outfit', sans-serif" }}>Pronto a fare il salto?</p>
+                <p className="text-sm text-slate-400 max-w-md">Sblocca i <strong className="text-violet-300">Corsi Privati</strong>, gli indicatori, i bot e le live riservate con un piano premium.</p>
+              </div>
+            </div>
+            <button onClick={onUpgrade} className="flex-shrink-0 inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors">
+              Scopri i piani <ArrowRight size={15} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {editing && <PlaylistModal playlist={editing} section={section} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load(); }} />}
     </div>
   );
 }
 
-function PlaylistModal({ playlist, onClose, onSaved }) {
+function PlaylistModal({ playlist, section = "private", onClose, onSaved }) {
   const [title, setTitle] = useState(playlist.title || "");
   const [description, setDescription] = useState(playlist.description || "");
   const [saving, setSaving] = useState(false);
@@ -94,7 +143,7 @@ function PlaylistModal({ playlist, onClose, onSaved }) {
     if (!title.trim()) return;
     setSaving(true);
     try {
-      if (isNew) await createPlaylist({ title: title.trim(), description: description.trim() });
+      if (isNew) await createPlaylist({ title: title.trim(), description: description.trim(), section });
       else await updatePlaylist(playlist.id, { title: title.trim(), description: description.trim() });
       onSaved();
     } finally { setSaving(false); }
