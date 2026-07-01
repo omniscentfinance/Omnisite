@@ -61,15 +61,14 @@ function EconCalendar() {
             {new Date(day).toLocaleDateString("it-IT", { weekday: "long", day: "2-digit", month: "long" })}
           </p>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[560px]">
+            <table className="w-full text-sm min-w-[480px]">
               <thead>
                 <tr className="text-left text-[11px] uppercase tracking-wide text-slate-500 border-b border-[#1E1E2A]">
                   <th className="py-2 pr-3 font-semibold">Ora</th>
                   <th className="py-2 pr-3 font-semibold">Paese</th>
                   <th className="py-2 pr-3 font-semibold">Evento</th>
                   <th className="py-2 px-3 font-semibold text-right">Prec.</th>
-                  <th className="py-2 px-3 font-semibold text-right">Consenso</th>
-                  <th className="py-2 pl-3 font-semibold text-right">Effettivo</th>
+                  <th className="py-2 pl-3 font-semibold text-right">Consenso</th>
                 </tr>
               </thead>
               <tbody>
@@ -77,17 +76,13 @@ function EconCalendar() {
                   const time = ev.date && ev.date.length > 10
                     ? new Date(ev.date).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })
                     : "—";
-                  const beat = ev.actual != null && ev.estimate != null && !isNaN(+ev.actual) && !isNaN(+ev.estimate)
-                    ? (+ev.actual >= +ev.estimate ? "text-emerald-400" : "text-red-400")
-                    : "text-white";
                   return (
                     <tr key={i} className="border-b border-[#1E1E2A]/50 last:border-0">
                       <td className="py-2.5 pr-3 text-slate-400 whitespace-nowrap">{time}</td>
                       <td className="py-2.5 pr-3"><span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#1E1E2A] text-slate-300">{ev.country || ev.currency || "—"}</span></td>
                       <td className="py-2.5 pr-3 text-white">{ev.event}</td>
                       <td className="py-2.5 px-3 text-right text-slate-400">{fmtVal(ev.previous)}</td>
-                      <td className="py-2.5 px-3 text-right text-slate-300">{fmtVal(ev.estimate)}</td>
-                      <td className={`py-2.5 pl-3 text-right font-semibold ${beat}`}>{fmtVal(ev.actual)}</td>
+                      <td className="py-2.5 pl-3 text-right text-slate-300">{fmtVal(ev.estimate)}</td>
                     </tr>
                   );
                 })}
