@@ -1,7 +1,24 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { CalendarClock, LineChart as LineIcon, Loader2 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { supabase } from "@/lib/supabase";
+
+// Calendario economico TradingView (mostra actual + precedente), solo alto impatto.
+function CalendarWidget() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current;
+    if (!c) return;
+    c.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+    const s = document.createElement("script");
+    s.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
+    s.async = true;
+    s.innerHTML = JSON.stringify({ colorTheme: "dark", isTransparent: true, locale: "it", importanceFilter: "1", width: "100%", height: 600 });
+    c.appendChild(s);
+    return () => { c.innerHTML = ""; };
+  }, []);
+  return <div ref={ref} className="tradingview-widget-container w-full overflow-hidden" />;
+}
 
 // Indicatori macro (chiavi allineate alla Edge Function fred-series).
 const MACRO_INDICATORS = [
@@ -18,81 +35,6 @@ async function getFredSeries(key) {
   const { data, error } = await supabase.functions.invoke("fred-series", { body: { key } });
   if (error) throw error;
   return data?.points ?? [];
-}
-
-// Calendario economico custom (dati Financial Modeling Prep, alto impatto).
-function fmtVal(v) {
-  return v === null || v === undefined || v === "" ? "—" : String(v);
-}
-function EconCalendar() {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data, error: e } = await supabase.functions.invoke("econ-calendar");
-        if (e) throw e;
-        if (data?.error) setError(data.error);
-        setEvents(data?.events ?? []);
-      } catch { setError("Dati non disponibili."); }
-      setLoading(false);
-    })();
-  }, []);
-
-  // Raggruppa per giorno
-  const byDay = events.reduce((acc, ev) => {
-    const day = (ev.date || "").slice(0, 10);
-    (acc[day] = acc[day] || []).push(ev);
-    return acc;
-  }, {});
-  const days = Object.keys(byDay).sort();
-
-  if (loading) return <div className="h-48 flex items-center justify-center"><Loader2 className="animate-spin text-violet-400" size={22} /></div>;
-  if (error && events.length === 0) return <div className="py-10 text-center text-sm text-slate-500">{error}</div>;
-  if (events.length === 0) return <div className="py-10 text-center text-sm text-slate-500">Nessun evento ad alto impatto nei prossimi giorni.</div>;
-
-  return (
-    <div className="space-y-5">
-      {days.map((day) => (
-        <div key={day}>
-          <p className="text-xs font-semibold text-violet-300 uppercase tracking-wide mb-2">
-            {new Date(day).toLocaleDateString("it-IT", { weekday: "long", day: "2-digit", month: "long" })}
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[480px]">
-              <thead>
-                <tr className="text-left text-[11px] uppercase tracking-wide text-slate-500 border-b border-[#1E1E2A]">
-                  <th className="py-2 pr-3 font-semibold">Ora</th>
-                  <th className="py-2 pr-3 font-semibold">Paese</th>
-                  <th className="py-2 pr-3 font-semibold">Evento</th>
-                  <th className="py-2 px-3 font-semibold text-right">Precedente</th>
-                  <th className="py-2 pl-3 font-semibold text-right">Forecast</th>
-                </tr>
-              </thead>
-              <tbody>
-                {byDay[day].map((ev, i) => {
-                  const time = ev.date && ev.date.length > 10
-                    ? new Date(ev.date).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })
-                    : "—";
-                  return (
-                    <tr key={i} className="border-b border-[#1E1E2A]/50 last:border-0">
-                      <td className="py-2.5 pr-3 text-slate-400 whitespace-nowrap">{time}</td>
-                      <td className="py-2.5 pr-3"><span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#1E1E2A] text-slate-300">{ev.country || ev.currency || "—"}</span></td>
-                      <td className="py-2.5 pr-3 text-white">{ev.event}</td>
-                      <td className="py-2.5 px-3 text-right text-slate-400">{fmtVal(ev.previous)}</td>
-                      <td className="py-2.5 pl-3 text-right text-slate-300">{fmtVal(ev.estimate)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
 }
 
 function fmtDate(d) {
@@ -136,8 +78,8 @@ export default function MacroNews() {
       </div>
 
       {/* Calendario economico (alto impatto) */}
-      <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-5 mb-6">
-        <EconCalendar />
+      <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-3 mb-6 overflow-hidden">
+        <CalendarWidget />
       </div>
 
       {/* Grafici degli indicatori (dati FRED) */}
@@ -183,7 +125,7 @@ export default function MacroNews() {
         )}
       </div>
 
-      <p className="text-xs text-slate-600 mt-3">Calendario: ForexFactory · Indicatori: FRED (Federal Reserve Economic Data).</p>
+      <p className="text-xs text-slate-600 mt-3">Calendario: TradingView · Indicatori: FRED (Federal Reserve Economic Data).</p>
     </div>
   );
 }
