@@ -13,6 +13,7 @@ import LiveTrading from "@/components/dashboard/LiveTrading";
 import CoursesSection from "@/components/dashboard/courses/CoursesSection";
 import TradingJournal from "@/components/dashboard/journal/TradingJournal";
 import MacroNews from "@/components/dashboard/MacroNews";
+import Forum from "@/components/dashboard/Forum";
 
 const SERVICES = [
   { id: "corso-base", label: "Corso Base", icon: BookMarked, free: true, to: "/dashboard/corso-base" },
@@ -197,6 +198,7 @@ export default function Dashboard() {
             <Route path="corso-base" element={<CoursesSection section="base" onUpgrade={() => setPaymentOpen(true)} />} />
             <Route path="trading-journal" element={<TradingJournal />} />
             <Route path="news" element={<MacroNews />} />
+            <Route path="forum" element={<Forum />} />
             <Route path="live" element={<ProtectedSection><LiveRoom /></ProtectedSection>} />
             <Route path="live-trading" element={<ProtectedSection><LiveTrading /></ProtectedSection>} />
             <Route
