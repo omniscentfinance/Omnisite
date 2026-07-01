@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, Zap } from "lucide-react";
+import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, CalendarDays, Radio, MessagesSquare, Lock, Zap } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/dashboard/Sidebar";
 import ServiceCard from "@/components/dashboard/ServiceCard";
@@ -15,18 +15,54 @@ import TradingJournal from "@/components/dashboard/journal/TradingJournal";
 import MacroNews from "@/components/dashboard/MacroNews";
 import Forum from "@/components/dashboard/Forum";
 
-const SERVICES = [
-  { id: "corso-base", label: "Corso Base", icon: BookMarked, free: true, to: "/dashboard/corso-base" },
-  { id: "trading-journal", label: "Trading Journal", icon: BarChart2, free: true, to: "/dashboard/trading-journal" },
-  { id: "news", label: "News Macro", icon: CalendarClock, free: true, to: "/dashboard/news" },
-  { id: "corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false, to: "/dashboard/corsi-privati" },
-  { id: "indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false, to: "/dashboard/indicatori-bot" },
-];
+const SVC = {
+  base: [
+    { id: "corso-base", label: "Corso Base", icon: BookMarked, to: "/dashboard/corso-base" },
+    { id: "trading-journal", label: "Trading Journal", icon: BarChart2, to: "/dashboard/trading-journal" },
+    { id: "news", label: "News Macro", icon: CalendarClock, to: "/dashboard/news" },
+  ],
+  advanced: [
+    { id: "corsi-privati", label: "Corsi Privati", icon: BookOpen, to: "/dashboard/corsi-privati" },
+    { id: "indicatori-bot", label: "Indicatori & Bot", icon: Bot, to: "/dashboard/indicatori-bot" },
+    { id: "forum", label: "Forum", icon: MessagesSquare, to: "/dashboard/forum" },
+    { id: "live", label: "Live Trading", icon: Radio, to: "/dashboard/live-trading" },
+  ],
+  master: [
+    { id: "calendario", label: "Mentorship Privata", icon: CalendarDays, to: "/dashboard/calendario" },
+  ],
+};
+
+function LockedTier({ title, desc, onUpgrade }) {
+  return (
+    <button onClick={onUpgrade}
+      className="text-left rounded-xl border border-red-500/30 bg-red-500/5 p-4 hover:border-red-500/50 transition-colors">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center flex-shrink-0">
+            <Lock size={16} className="text-red-400" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-white truncate">{title}</p>
+            <p className="text-xs text-slate-500 truncate">{desc}</p>
+          </div>
+        </div>
+        <span className="flex-shrink-0 text-xs font-semibold text-red-300 bg-red-500/10 px-2 py-1 rounded-md">Bloccato</span>
+      </div>
+    </button>
+  );
+}
 
 function DashboardHome({ onUpgrade }) {
-  const { profile, hasAdvanced } = useAuth();
-  const active = hasAdvanced();
+  const { profile, hasAdvanced, isMentorshipActive } = useAuth();
+  const adv = hasAdvanced();
+  const master = isMentorshipActive();
   const firstName = profile?.full_name?.split(" ")[0] || "Utente";
+
+  const activeServices = [
+    ...SVC.base,
+    ...(adv ? SVC.advanced : []),
+    ...(master ? SVC.master : []),
+  ];
 
   return (
     <div className="max-w-2xl">
@@ -35,42 +71,30 @@ function DashboardHome({ onUpgrade }) {
         <h1 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
           Bentornato, {firstName} 👋
         </h1>
-        <p className="text-slate-400 text-sm">
-          Ecco una panoramica dei tuoi servizi attivi.
-        </p>
+        <p className="text-slate-400 text-sm">I tuoi servizi attivi.</p>
       </div>
 
-      {/* Upgrade banner */}
-      {!active && (
-        <div className="mb-6 flex items-center justify-between gap-4 bg-violet-500/10 border border-violet-500/20 rounded-xl px-4 py-3">
-          <div className="flex items-center gap-3">
-            <Zap size={16} className="text-violet-400 flex-shrink-0" />
-            <p className="text-sm text-violet-300">
-              Sblocca <strong>Corsi Privati</strong> e <strong>Indicatori & Bot</strong> con un piano premium.
-            </p>
-          </div>
-          <button
-            onClick={onUpgrade}
-            className="flex-shrink-0 text-xs font-semibold bg-violet-600 hover:bg-violet-500 text-white px-3 py-1.5 rounded-md transition-colors"
-          >
-            Sblocca
-          </button>
-        </div>
-      )}
-
-      {/* Service cards */}
+      {/* Servizi attivi */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {SERVICES.map((s) => (
-          <ServiceCard
-            key={s.id}
-            label={s.label}
-            icon={s.icon}
-            unlocked={s.free || active}
-            to={s.to}
-            onUpgrade={onUpgrade}
-          />
+        {activeServices.map((s) => (
+          <ServiceCard key={s.id} label={s.label} icon={s.icon} unlocked to={s.to} onUpgrade={onUpgrade} />
         ))}
       </div>
+
+      {/* Tier bloccati (in rosso) */}
+      {(!adv || !master) && (
+        <div className="mt-6">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Da sbloccare</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {!adv && (
+              <LockedTier title="Servizi Advanced" desc="Corsi privati, indicatori, bot, forum e live" onUpgrade={onUpgrade} />
+            )}
+            {!master && (
+              <LockedTier title="Servizi Master" desc="Mentorship privata 1-to-1" onUpgrade={onUpgrade} />
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Banner live giornaliera */}
       <LiveBanner onUpgrade={onUpgrade} />
