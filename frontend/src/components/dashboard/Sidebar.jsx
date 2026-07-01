@@ -2,18 +2,29 @@ import { NavLink } from "react-router-dom";
 import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, CalendarClock, Radio, MessagesSquare, Users, Lock, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
+const DASHBOARD_ITEM = { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, free: true, end: true };
+
 const NAV = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, free: true, end: true },
-  { to: "/dashboard/trading-journal", label: "Trading Journal", icon: BarChart2, free: true },
-  { to: "/dashboard/news", label: "News Macro", icon: CalendarClock, free: true },
-  { to: "/dashboard/forum", label: "Forum", icon: MessagesSquare, paidOnly: true },
-  { to: "/dashboard/corso-base", label: "Corso Base", icon: BookMarked, free: true },
-  { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false },
-  { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false },
-  { to: "/dashboard/calendario", label: "Prenota Sessione", icon: CalendarDays, mentorOnly: true },
-  { to: "/dashboard/studenti", label: "Studenti", icon: Users, adminOnly: true },
-  { to: "/dashboard/live-trading", label: "Live Trading", icon: Radio, free: false, glow: true, spacer: true },
+  // Free access
+  { to: "/dashboard/corso-base", label: "Corso Base", icon: BookMarked, free: true, group: "free" },
+  { to: "/dashboard/trading-journal", label: "Trading Journal", icon: BarChart2, free: true, group: "free" },
+  { to: "/dashboard/news", label: "News Macro", icon: CalendarClock, free: true, group: "free" },
+  // Advanced (tutto tranne mentorship)
+  { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false, group: "advanced" },
+  { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false, group: "advanced" },
+  { to: "/dashboard/forum", label: "Forum", icon: MessagesSquare, paidOnly: true, group: "advanced" },
+  // Master + (mentorship private)
+  { to: "/dashboard/calendario", label: "Prenota Sessione", icon: CalendarDays, mentorOnly: true, group: "master" },
 ];
+
+const GROUPS = [
+  { key: "free", label: "Free access" },
+  { key: "advanced", label: "Advanced" },
+  { key: "master", label: "Master +" },
+];
+
+const ADMIN_ITEM = { to: "/dashboard/studenti", label: "Studenti", icon: Users, adminOnly: true };
+const LIVE_ITEM = { to: "/dashboard/live-trading", label: "Live Trading", icon: Radio, free: false, glow: true, spacer: true };
 
 const PLAN_LABELS = {
   master_plus: "Master +",
@@ -29,6 +40,32 @@ export default function Sidebar({ onClose }) {
   const admin = isAdmin();
   const paid = hasPaidPlan();
   const plan = effectivePlan();
+
+  const renderItem = ({ to, label, icon: Icon, free, end, mentorOnly, adminOnly, paidOnly, glow, spacer }) => {
+    const locked = paidOnly ? !paid : (!free && !mentorOnly && !adminOnly && !active);
+    const link = (
+      <NavLink
+        to={to}
+        end={end}
+        onClick={onClose}
+        className={({ isActive }) =>
+          `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${glow ? "bg-[#111113]" : ""} ${
+            locked
+              ? `text-slate-500 cursor-not-allowed ${glow ? "" : "pointer-events-none"}`
+              : isActive
+              ? "bg-violet-500/10 text-violet-300 font-medium"
+              : glow ? "text-white hover:text-violet-200" : "text-slate-400 hover:text-white hover:bg-white/5"
+          }`
+        }
+      >
+        <Icon size={16} className={`flex-shrink-0 ${glow ? "text-red-500" : ""}`} />
+        <span className="flex-1 font-medium">{label}</span>
+        {locked && <Lock size={13} className="text-slate-500" />}
+      </NavLink>
+    );
+    if (glow) return <div key={to} className={`live-glow-wrap ${spacer ? "mt-4" : ""}`}>{link}</div>;
+    return <div key={to}>{link}</div>;
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -60,41 +97,22 @@ export default function Sidebar({ onClose }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly, adminOnly, paidOnly, glow, spacer }) => {
-          if (adminOnly && !admin) return null; // visibile solo agli admin
-          if (mentorOnly && !mentor) return null; // visibile solo ai Master Mentor
-          const locked = paidOnly ? !paid : (!free && !mentorOnly && !adminOnly && !active);
-          const link = (
-            <NavLink
-              to={to}
-              end={end}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  glow ? "bg-[#111113]" : ""
-                } ${
-                  locked
-                    ? `text-slate-500 cursor-not-allowed ${glow ? "" : "pointer-events-none"}`
-                    : isActive
-                    ? "bg-violet-500/10 text-violet-300 font-medium"
-                    : glow ? "text-white hover:text-violet-200" : "text-slate-400 hover:text-white hover:bg-white/5"
-                }`
-              }
-            >
-              <Icon size={16} className={`flex-shrink-0 ${glow ? "text-red-500" : ""}`} />
-              <span className="flex-1 font-medium">{label}</span>
-              {locked && <Lock size={13} className="text-slate-500" />}
-            </NavLink>
+        {renderItem(DASHBOARD_ITEM)}
+
+        {GROUPS.map((g) => {
+          const items = NAV.filter((i) => i.group === g.key && !(i.mentorOnly && !mentor) && !(i.adminOnly && !admin));
+          if (items.length === 0) return null;
+          return (
+            <div key={g.key} className="pt-4">
+              <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600">{g.label}</p>
+              {items.map(renderItem)}
+            </div>
           );
-          if (glow) {
-            return (
-              <div key={to} className={`live-glow-wrap ${spacer ? "mt-4" : ""}`}>
-                {link}
-              </div>
-            );
-          }
-          return <div key={to}>{link}</div>;
         })}
+
+        {admin && <div className="pt-4">{renderItem(ADMIN_ITEM)}</div>}
+
+        {renderItem(LIVE_ITEM)}
       </nav>
 
       {/* Logout */}
