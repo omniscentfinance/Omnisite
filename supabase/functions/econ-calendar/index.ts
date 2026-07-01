@@ -1,10 +1,12 @@
 // Supabase Edge Function — econ-calendar
-// Proxy verso Financial Modeling Prep per il calendario economico (con
-// previous / estimate / actual / impact). Filtra sugli eventi ad alto impatto.
-//
-// Secret richiesto: FMP_API_KEY
+// Calendario economico gratuito (feed ForexFactory via FairEconomy), senza API key.
+// Restituisce gli eventi ad alto impatto di questa e della prossima settimana,
+// con forecast (consenso), previous (precedente) e actual (effettivo).
 
-const FMP_KEY = Deno.env.get("FMP_API_KEY")!;
+const FEEDS = [
+  "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+  "https://nfs.faireconomy.media/ff_calendar_nextweek.json",
+];
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,38 +19,30 @@ const json = (b: unknown, s = 200) =>
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  const now = new Date();
-  const to = new Date(); to.setDate(to.getDate() + 14);
-  const from = now.toISOString().slice(0, 10);
-  const toStr = to.toISOString().slice(0, 10);
-
-  const url = `https://financialmodelingprep.com/api/v3/economic_calendar?from=${from}&to=${toStr}&apikey=${FMP_KEY}`;
-
-  let data: unknown;
+  let all: any[] = [];
   try {
-    const res = await fetch(url);
-    data = await res.json();
+    for (const url of FEEDS) {
+      const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+      const data = await res.json();
+      if (Array.isArray(data)) all = all.concat(data);
+    }
   } catch {
-    return json({ events: [], error: "Errore nella richiesta a FMP" }, 502);
+    return json({ events: [], error: "Dati non disponibili" }, 200);
   }
 
-  if (!Array.isArray(data)) {
-    const msg = (data as Record<string, string>)?.["Error Message"] || "Dati non disponibili";
-    return json({ events: [], error: msg }, 200);
-  }
-
-  const events = (data as any[])
+  const events = all
     .filter((e) => (e.impact || "").toLowerCase() === "high")
     .map((e) => ({
       date: e.date,
       country: e.country || "",
-      currency: e.currency || "",
-      event: e.event || "",
-      previous: e.previous ?? null,
-      estimate: e.estimate ?? null,
-      actual: e.actual ?? null,
+      currency: e.country || "",
+      event: e.title || "",
+      previous: e.previous || null,
+      estimate: e.forecast || null,
+      actual: e.actual || null,
       impact: e.impact || "",
-    }));
+    }))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return json({ events });
 });
