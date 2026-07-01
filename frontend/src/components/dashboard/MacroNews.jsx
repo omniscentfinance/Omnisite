@@ -188,7 +188,7 @@ export default function MacroNews() {
         )}
       </div>
 
-      <p className="text-xs text-slate-600 mt-3">Calendario: TradingView · Indicatori: FRED (Federal Reserve Economic Data).</p>
+      <p className="text-xs text-slate-600 mt-3">Calendario: ForexFactory · Indicatori: FRED (Federal Reserve Economic Data).</p>
     </div>
   );
 }
