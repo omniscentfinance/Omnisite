@@ -20,14 +20,20 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   let all: any[] = [];
-  try {
-    for (const url of FEEDS) {
-      const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+  let lastErr = "";
+  for (const url of FEEDS) {
+    try {
+      const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0", "Accept": "application/json" } });
+      if (!res.ok) { lastErr = `HTTP ${res.status} su ${url}`; continue; }
       const data = await res.json();
       if (Array.isArray(data)) all = all.concat(data);
+      else lastErr = "Risposta non valida dal feed";
+    } catch (e) {
+      lastErr = `fetch fallito: ${e?.message || e} (${url})`;
     }
-  } catch {
-    return json({ events: [], error: "Dati non disponibili" }, 200);
+  }
+  if (all.length === 0) {
+    return json({ events: [], error: lastErr || "Dati non disponibili", version: "faireconomy" }, 200);
   }
 
   const events = all
