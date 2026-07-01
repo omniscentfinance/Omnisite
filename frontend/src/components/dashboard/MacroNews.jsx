@@ -67,8 +67,8 @@ function EconCalendar() {
                   <th className="py-2 pr-3 font-semibold">Ora</th>
                   <th className="py-2 pr-3 font-semibold">Paese</th>
                   <th className="py-2 pr-3 font-semibold">Evento</th>
-                  <th className="py-2 px-3 font-semibold text-right">Prec.</th>
-                  <th className="py-2 pl-3 font-semibold text-right">Consenso</th>
+                  <th className="py-2 px-3 font-semibold text-right">Precedente</th>
+                  <th className="py-2 pl-3 font-semibold text-right">Forecast</th>
                 </tr>
               </thead>
               <tbody>
