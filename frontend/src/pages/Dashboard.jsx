@@ -140,6 +140,33 @@ function MentorSection({ children }) {
   return children;
 }
 
+function PaidSection({ children, onUpgrade }) {
+  const { hasPaidPlan } = useAuth();
+  const navigate = useNavigate();
+  if (!hasPaidPlan()) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
+        <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-4">
+          <BookOpen size={22} className="text-violet-400" />
+        </div>
+        <h2 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          Sezione riservata
+        </h2>
+        <p className="text-slate-500 text-sm mb-4">Il Forum è disponibile con qualsiasi piano a pagamento.</p>
+        <div className="flex items-center gap-3">
+          <button onClick={onUpgrade} className="text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-md transition-colors">
+            Scopri i piani
+          </button>
+          <button onClick={() => navigate("/dashboard")} className="text-sm text-violet-400 hover:text-violet-300 transition-colors">
+            ← Torna alla dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+  return children;
+}
+
 function AdminSection({ children }) {
   const { isAdmin } = useAuth();
   if (!isAdmin()) return <Navigate to="/dashboard" replace />;
@@ -198,7 +225,7 @@ export default function Dashboard() {
             <Route path="corso-base" element={<CoursesSection section="base" onUpgrade={() => setPaymentOpen(true)} />} />
             <Route path="trading-journal" element={<TradingJournal />} />
             <Route path="news" element={<MacroNews />} />
-            <Route path="forum" element={<Forum />} />
+            <Route path="forum" element={<PaidSection onUpgrade={() => setPaymentOpen(true)}><Forum /></PaidSection>} />
             <Route path="live" element={<ProtectedSection><LiveRoom /></ProtectedSection>} />
             <Route path="live-trading" element={<ProtectedSection><LiveTrading /></ProtectedSection>} />
             <Route

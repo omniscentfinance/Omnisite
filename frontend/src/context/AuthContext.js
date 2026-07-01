@@ -109,8 +109,11 @@ export function AuthProvider({ children }) {
   // Retrocompat: "piano attivo" = ha almeno l'accesso ai servizi advanced.
   const isPlanActive = () => hasAdvanced();
 
+  // Ha un piano a pagamento qualsiasi (advanced, mentorship o master+). Admin incluso.
+  const hasPaidPlan = () => hasAdvanced() || isMentorshipActive();
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, refreshProfile, isPlanActive, hasAdvanced, isMentorshipActive, isAdmin, effectivePlan }}>
+    <AuthContext.Provider value={{ user, profile, loading, signUp, signIn, signOut, refreshProfile, isPlanActive, hasAdvanced, isMentorshipActive, isAdmin, effectivePlan, hasPaidPlan }}>
       {children}
     </AuthContext.Provider>
   );

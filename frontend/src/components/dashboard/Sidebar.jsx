@@ -6,7 +6,7 @@ const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, free: true, end: true },
   { to: "/dashboard/trading-journal", label: "Trading Journal", icon: BarChart2, free: true },
   { to: "/dashboard/news", label: "News Macro", icon: CalendarClock, free: true },
-  { to: "/dashboard/forum", label: "Forum", icon: MessagesSquare, free: true },
+  { to: "/dashboard/forum", label: "Forum", icon: MessagesSquare, paidOnly: true },
   { to: "/dashboard/corso-base", label: "Corso Base", icon: BookMarked, free: true },
   { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false },
   { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false },
@@ -23,10 +23,11 @@ const PLAN_LABELS = {
 };
 
 export default function Sidebar({ onClose }) {
-  const { profile, signOut, hasAdvanced, isMentorshipActive, isAdmin, effectivePlan } = useAuth();
+  const { profile, signOut, hasAdvanced, isMentorshipActive, isAdmin, effectivePlan, hasPaidPlan } = useAuth();
   const active = hasAdvanced();
   const mentor = isMentorshipActive();
   const admin = isAdmin();
+  const paid = hasPaidPlan();
   const plan = effectivePlan();
 
   return (
@@ -59,10 +60,10 @@ export default function Sidebar({ onClose }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly, adminOnly, glow, spacer }) => {
+        {NAV.map(({ to, label, icon: Icon, free, end, mentorOnly, adminOnly, paidOnly, glow, spacer }) => {
           if (adminOnly && !admin) return null; // visibile solo agli admin
           if (mentorOnly && !mentor) return null; // visibile solo ai Master Mentor
-          const locked = !free && !mentorOnly && !adminOnly && !active;
+          const locked = paidOnly ? !paid : (!free && !mentorOnly && !adminOnly && !active);
           const link = (
             <NavLink
               to={to}
