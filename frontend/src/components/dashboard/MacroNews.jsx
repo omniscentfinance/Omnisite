@@ -30,7 +30,7 @@ function CalendarWidget() {
     const s = document.createElement("script");
     s.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
     s.async = true;
-    s.innerHTML = JSON.stringify({ colorTheme: "dark", isTransparent: true, locale: "it", importanceFilter: "0,1", width: "100%", height: 600 });
+    s.innerHTML = JSON.stringify({ colorTheme: "dark", isTransparent: true, locale: "it", importanceFilter: "1", width: "100%", height: 600 });
     c.appendChild(s);
     return () => { c.innerHTML = ""; };
   }, []);
