@@ -278,7 +278,7 @@ function TradeModal({ date, onClose, onSaved }) {
         image_url,
       });
       onSaved();
-    } catch { setErr("Errore nel salvataggio. Riprova."); } finally { setSaving(false); }
+    } catch (e) { setErr(e?.message || "Errore nel salvataggio. Riprova."); } finally { setSaving(false); }
   };
 
   const inputCls = "w-full px-3 py-2 rounded-md border border-[#1E1E2A] bg-[#09090B] text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500";
