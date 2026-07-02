@@ -72,6 +72,11 @@ export async function createTrade(trade) {
   if (error) throw error;
 }
 
+export async function updateTrade(id, fields) {
+  const { error } = await supabase.from("trades").update(fields).eq("id", id);
+  if (error) throw error;
+}
+
 export async function deleteTrade(id) {
   const { error } = await supabase.from("trades").delete().eq("id", id);
   if (error) throw error;

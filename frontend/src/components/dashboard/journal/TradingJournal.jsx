@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  ChevronLeft, ChevronRight, Plus, X, Trash2, ImagePlus, Loader2,
+  ChevronLeft, ChevronRight, Plus, X, Trash2, Pencil, ImagePlus, Loader2,
   TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Minus,
 } from "lucide-react";
-import { listMonthTrades, createTrade, deleteTrade, uploadImage, dateKey, listStudents } from "@/lib/journal";
+import { listMonthTrades, createTrade, updateTrade, deleteTrade, uploadImage, dateKey, listStudents } from "@/lib/journal";
 import { useAuth } from "@/context/AuthContext";
 import EquityChart from "./EquityChart";
 
@@ -25,6 +25,7 @@ export default function TradingJournal() {
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState(null);
   const [adding, setAdding] = useState(false);
+  const [editingTrade, setEditingTrade] = useState(null);
   const [students, setStudents] = useState([]);
   const [viewUserId, setViewUserId] = useState(null); // null = il proprio journal
 
@@ -199,7 +200,7 @@ export default function TradingJournal() {
                 <p className="text-sm text-slate-500">{readOnly ? "Nessun report in questo giorno." : "Nessun report. Clicca + per aggiungerne uno."}</p>
               ) : (
                 <div className="space-y-3">
-                  {dayTrades.map((t) => <TradeCard key={t.id} trade={t} onDeleted={load} readOnly={readOnly} />)}
+                  {dayTrades.map((t) => <TradeCard key={t.id} trade={t} onDeleted={load} onEdit={() => setEditingTrade(t)} readOnly={readOnly} />)}
                 </div>
               )}
             </>
@@ -208,11 +209,12 @@ export default function TradingJournal() {
       </div>
 
       {adding && <TradeModal date={selectedDay} onClose={() => setAdding(false)} onSaved={() => { setAdding(false); load(); }} />}
+      {editingTrade && <TradeModal date={selectedDay} trade={editingTrade} onClose={() => setEditingTrade(null)} onSaved={() => { setEditingTrade(null); load(); }} />}
     </div>
   );
 }
 
-function TradeCard({ trade, onDeleted, readOnly }) {
+function TradeCard({ trade, onDeleted, onEdit, readOnly }) {
   const o = OUTCOMES[trade.outcome] || OUTCOMES.be;
   const dir = trade.direction === "long";
   return (
@@ -232,7 +234,10 @@ function TradeCard({ trade, onDeleted, readOnly }) {
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${o.bg} ${o.cls}`}>{o.label}</span>
           </div>
           {!readOnly && (
-            <button onClick={async () => { if (confirm("Eliminare il report?")) { await deleteTrade(trade.id); onDeleted(); } }} className="text-slate-600 hover:text-red-400 flex-shrink-0"><Trash2 size={13} /></button>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button onClick={onEdit} className="text-slate-600 hover:text-violet-400"><Pencil size={13} /></button>
+              <button onClick={async () => { if (confirm("Eliminare il report?")) { await deleteTrade(trade.id); onDeleted(); } }} className="text-slate-600 hover:text-red-400"><Trash2 size={13} /></button>
+            </div>
           )}
         </div>
         {trade.pnl && <p className="text-sm text-slate-300">P&L / R: <span className="font-medium text-white">{trade.pnl}</span></p>}
@@ -245,10 +250,19 @@ function TradeCard({ trade, onDeleted, readOnly }) {
   );
 }
 
-function TradeModal({ date, onClose, onSaved }) {
-  const [form, setForm] = useState({ asset: "", direction: "long", outcome: "win", pnl: "", pnl_amount: "", description: "", lessons: "" });
+function TradeModal({ date, trade, onClose, onSaved }) {
+  const isEdit = !!trade;
+  const [form, setForm] = useState(trade ? {
+    asset: trade.asset || "",
+    direction: trade.direction || "long",
+    outcome: trade.outcome || "win",
+    pnl: trade.pnl || "",
+    pnl_amount: trade.pnl_amount ?? "",
+    description: trade.description || "",
+    lessons: trade.lessons || "",
+  } : { asset: "", direction: "long", outcome: "win", pnl: "", pnl_amount: "", description: "", lessons: "" });
   const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState(trade?.image_url || null);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
   const fileRef = useRef(null);
@@ -264,10 +278,9 @@ function TradeModal({ date, onClose, onSaved }) {
     if (!form.asset.trim()) { setErr("Inserisci lo strumento."); return; }
     setSaving(true); setErr("");
     try {
-      let image_url = null;
+      let image_url = trade?.image_url || null;
       if (file) image_url = await uploadImage(file);
-      await createTrade({
-        trade_date: dateKey(date),
+      const payload = {
         asset: form.asset.trim(),
         direction: form.direction,
         outcome: form.outcome,
@@ -276,7 +289,9 @@ function TradeModal({ date, onClose, onSaved }) {
         description: form.description.trim(),
         lessons: form.lessons.trim(),
         image_url,
-      });
+      };
+      if (isEdit) await updateTrade(trade.id, payload);
+      else await createTrade({ ...payload, trade_date: dateKey(date) });
       onSaved();
     } catch (e) { setErr(e?.message || "Errore nel salvataggio. Riprova."); } finally { setSaving(false); }
   };
@@ -287,7 +302,7 @@ function TradeModal({ date, onClose, onSaved }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto">
       <div className="w-full max-w-lg bg-[#111113] border border-[#1E1E2A] rounded-2xl p-6 relative my-8">
         <button onClick={onClose} className="absolute top-4 right-4 text-slate-500 hover:text-white"><X size={18} /></button>
-        <h2 className="text-lg font-semibold text-white mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>Nuovo report</h2>
+        <h2 className="text-lg font-semibold text-white mb-4" style={{ fontFamily: "'Outfit', sans-serif" }}>{isEdit ? "Modifica report" : "Nuovo report"}</h2>
 
         {/* Immagine */}
         <div onClick={() => fileRef.current?.click()}
@@ -331,7 +346,7 @@ function TradeModal({ date, onClose, onSaved }) {
 
         {err && <p className="text-sm text-red-400 mb-3">{err}</p>}
         <button onClick={save} disabled={saving} className="w-full py-2.5 rounded-md bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-medium flex items-center justify-center gap-2">
-          {saving && <Loader2 size={15} className="animate-spin" />}{saving ? "Salvataggio..." : "Salva report"}
+          {saving && <Loader2 size={15} className="animate-spin" />}{saving ? "Salvataggio..." : (isEdit ? "Salva modifiche" : "Salva report")}
         </button>
       </div>
     </div>
