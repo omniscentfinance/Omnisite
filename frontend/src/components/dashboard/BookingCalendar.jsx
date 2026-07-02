@@ -70,6 +70,7 @@ export default function BookingCalendar() {
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [feedback, setFeedback] = useState(null); // { type: "success"|"error", msg }
+  const [pendingTime, setPendingTime] = useState(null); // orario in attesa di conferma
 
   const loadMonth = useCallback(async () => {
     setLoading(true);
@@ -125,6 +126,7 @@ export default function BookingCalendar() {
 
   const handleBook = async (time) => {
     if (!canBook || booking) return;
+    setPendingTime(null);
     const [h, m] = time.split(":").map(Number);
     const start = new Date(selectedDay);
     start.setHours(h, m, 0, 0);
@@ -260,7 +262,7 @@ export default function BookingCalendar() {
                     <button
                       key={time}
                       disabled={disabled}
-                      onClick={() => handleBook(time)}
+                      onClick={() => setPendingTime(time)}
                       className={`w-full py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                         booked
                           ? "border-[#1E1E2A] text-slate-600 line-through cursor-not-allowed"
@@ -285,6 +287,40 @@ export default function BookingCalendar() {
           )}
         </div>
       </div>
+
+      {pendingTime && selectedDay && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+          <div className="bg-[#111113] border border-[#1E1E2A] rounded-2xl p-6 max-w-sm w-full">
+            <h3 className="text-base font-semibold text-white mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+              Confermi la prenotazione?
+            </h3>
+            <p className="text-sm text-slate-400 mb-6">
+              Stai per fissare una call per{" "}
+              <strong className="text-slate-200">
+                {DAY_NAMES[selectedDay.getDay()]} {selectedDay.getDate()} {MONTH_NAMES[selectedDay.getMonth()]}
+              </strong>{" "}
+              alle <strong className="text-slate-200">{pendingTime}</strong>.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPendingTime(null)}
+                disabled={booking}
+                className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-[#1E1E2A] text-slate-300 hover:bg-white/5 transition-colors disabled:opacity-50"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={() => handleBook(pendingTime)}
+                disabled={booking}
+                className="flex-1 py-2.5 rounded-lg text-sm font-medium btn-primary disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {booking && <Loader2 size={14} className="animate-spin" />}
+                Conferma
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
