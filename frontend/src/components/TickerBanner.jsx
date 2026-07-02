@@ -35,7 +35,7 @@ export default function TickerBanner() {
   }, []);
 
   return (
-    <div className="relative z-10 w-full h-[46px] bg-[#09090B] overflow-hidden">
+    <div className="fixed top-16 lg:top-20 left-0 right-0 z-40 h-[46px] bg-black overflow-hidden shadow-[0_8px_16px_-4px_rgba(0,0,0,0.9)]">
       <div ref={ref} className="tradingview-widget-container" />
     </div>
   );
