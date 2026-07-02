@@ -205,3 +205,13 @@
     left: -0.5rem;
   }
 }
+
+/* Ticker mercati: nastro a scorrimento continuo */
+.ticker-track {
+  width: max-content;
+  animation: ticker-scroll 40s linear infinite;
+}
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
