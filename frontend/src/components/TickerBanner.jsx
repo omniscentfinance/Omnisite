@@ -7,8 +7,8 @@ const SYMBOLS = [
   { proName: "TVC:GOLD", title: "Gold/USD" },
   { proName: "TVC:SILVER", title: "Silver/USD" },
   { proName: "FX:EURUSD", title: "EUR/USD" },
-  { proName: "TVC:DXY", title: "DXY" },
-  { proName: "TVC:VIX", title: "VIX" },
+  { proName: "CAPITALCOM:DXY", title: "DXY" },
+  { proName: "AMEX:VIXY", title: "VIX" },
   { proName: "TVC:USOIL", title: "WTI" },
 ];
 
@@ -36,7 +36,7 @@ export default function TickerBanner() {
   }, []);
 
   return (
-    <div className="fixed top-16 lg:top-20 left-0 right-0 z-40 h-[46px] border-b border-[#1E1E2A] bg-[#09090B] overflow-hidden">
+    <div className="relative z-10 w-full h-[46px] bg-[#09090B] overflow-hidden">
       <div ref={ref} className="tradingview-widget-container" />
     </div>
   );

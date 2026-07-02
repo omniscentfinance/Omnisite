@@ -20,9 +20,9 @@ function MainSite() {
     <LangProvider>
       <div className="min-h-screen bg-[#09090B]" data-testid="app-root">
         <Header />
-        <TickerBanner />
         <main>
           <Hero />
+          <TickerBanner />
           <Services />
           <Stats />
           <Testimonials />

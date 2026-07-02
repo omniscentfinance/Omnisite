@@ -25,7 +25,7 @@ export default function Hero() {
       </video>
       <div className="hero-overlay absolute inset-0" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center pt-[104px] lg:pt-[126px]">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 text-center pt-20">
         <div className="fade-in-up">
           <p
             className="text-xs font-bold uppercase tracking-[0.25em] text-sky-400 mb-6"
