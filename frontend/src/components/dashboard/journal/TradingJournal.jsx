@@ -26,6 +26,7 @@ export default function TradingJournal() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [adding, setAdding] = useState(false);
   const [editingTrade, setEditingTrade] = useState(null);
+  const [expandedTrade, setExpandedTrade] = useState(null);
   const [students, setStudents] = useState([]);
   const [viewUserId, setViewUserId] = useState(null); // null = il proprio journal
 
@@ -200,7 +201,7 @@ export default function TradingJournal() {
                 <p className="text-sm text-slate-500">{readOnly ? "Nessun report in questo giorno." : "Nessun report. Clicca + per aggiungerne uno."}</p>
               ) : (
                 <div className="space-y-3">
-                  {dayTrades.map((t) => <TradeCard key={t.id} trade={t} onDeleted={load} onEdit={() => setEditingTrade(t)} readOnly={readOnly} />)}
+                  {dayTrades.map((t) => <TradeCard key={t.id} trade={t} onDeleted={load} onEdit={() => setEditingTrade(t)} onExpand={() => setExpandedTrade(t)} readOnly={readOnly} />)}
                 </div>
               )}
             </>
@@ -210,15 +211,19 @@ export default function TradingJournal() {
 
       {adding && <TradeModal date={selectedDay} onClose={() => setAdding(false)} onSaved={() => { setAdding(false); load(); }} />}
       {editingTrade && <TradeModal date={selectedDay} trade={editingTrade} onClose={() => setEditingTrade(null)} onSaved={() => { setEditingTrade(null); load(); }} />}
+      {expandedTrade && <TradeDetailModal trade={expandedTrade} onClose={() => setExpandedTrade(null)} />}
     </div>
   );
 }
 
-function TradeCard({ trade, onDeleted, onEdit, readOnly }) {
+function TradeCard({ trade, onDeleted, onEdit, onExpand, readOnly }) {
   const o = OUTCOMES[trade.outcome] || OUTCOMES.be;
   const dir = trade.direction === "long";
   return (
-    <div className="rounded-xl border border-[#1E1E2A] bg-[#16161A] overflow-hidden">
+    <div
+      onClick={onExpand}
+      className="rounded-xl border border-[#1E1E2A] bg-[#16161A] overflow-hidden cursor-pointer hover:border-violet-500/40 transition-colors"
+    >
       {trade.image_url && (
         <img src={trade.image_url} alt="" className="w-full max-h-48 object-cover" />
       )}
@@ -235,16 +240,73 @@ function TradeCard({ trade, onDeleted, onEdit, readOnly }) {
           </div>
           {!readOnly && (
             <div className="flex items-center gap-2 flex-shrink-0">
-              <button onClick={onEdit} className="text-slate-600 hover:text-violet-400"><Pencil size={13} /></button>
-              <button onClick={async () => { if (confirm("Eliminare il report?")) { await deleteTrade(trade.id); onDeleted(); } }} className="text-slate-600 hover:text-red-400"><Trash2 size={13} /></button>
+              <button onClick={(e) => { e.stopPropagation(); onEdit(); }} className="text-slate-600 hover:text-violet-400"><Pencil size={13} /></button>
+              <button onClick={async (e) => { e.stopPropagation(); if (confirm("Eliminare il report?")) { await deleteTrade(trade.id); onDeleted(); } }} className="text-slate-600 hover:text-red-400"><Trash2 size={13} /></button>
             </div>
           )}
         </div>
         {trade.pnl && <p className="text-sm text-slate-300">P&L / R: <span className="font-medium text-white">{trade.pnl}</span></p>}
-        {trade.description && <p className="text-sm text-slate-400 whitespace-pre-line">{trade.description}</p>}
+        {trade.description && <p className="text-sm text-slate-400 whitespace-pre-line line-clamp-2">{trade.description}</p>}
         {trade.lessons && (
-          <p className="text-xs text-slate-500 border-l-2 border-violet-500/40 pl-2 whitespace-pre-line"><span className="text-violet-400 font-medium">Lezioni:</span> {trade.lessons}</p>
+          <p className="text-xs text-slate-500 border-l-2 border-violet-500/40 pl-2 whitespace-pre-line line-clamp-1"><span className="text-violet-400 font-medium">Lezioni:</span> {trade.lessons}</p>
         )}
+      </div>
+    </div>
+  );
+}
+
+function TradeDetailModal({ trade, onClose }) {
+  const o = OUTCOMES[trade.outcome] || OUTCOMES.be;
+  const dir = trade.direction === "long";
+  const dateLabel = trade.trade_date
+    ? new Date(`${trade.trade_date}T00:00:00`).toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+    : "";
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto" onClick={onClose}>
+      <div
+        className="w-full max-w-2xl bg-[#111113] border border-[#1E1E2A] rounded-2xl overflow-hidden relative my-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 z-10 w-8 h-8 rounded-lg bg-black/50 hover:bg-black/70 flex items-center justify-center text-white"><X size={18} /></button>
+
+        {trade.image_url && (
+          <img src={trade.image_url} alt="" className="w-full max-h-[70vh] object-contain bg-black" />
+        )}
+
+        <div className="p-6 space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-lg font-semibold text-white">{trade.asset || "—"}</span>
+            {trade.direction && (
+              <span className={`text-sm font-medium flex items-center gap-0.5 ${dir ? "text-emerald-400" : "text-red-400"}`}>
+                {dir ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}{dir ? "Long" : "Short"}
+              </span>
+            )}
+            <span className={`text-sm font-semibold px-2.5 py-1 rounded-full ${o.bg} ${o.cls}`}>{o.label}</span>
+          </div>
+
+          {dateLabel && <p className="text-sm text-slate-500 capitalize">{dateLabel}</p>}
+
+          {trade.pnl && <p className="text-base text-slate-300">P&L / R: <span className="font-semibold text-white">{trade.pnl}</span></p>}
+          {typeof trade.pnl_amount === "number" && trade.pnl_amount !== 0 && (
+            <p className={`text-base font-semibold ${trade.pnl_amount > 0 ? "text-emerald-400" : "text-red-400"}`}>
+              {trade.pnl_amount > 0 ? "+" : ""}{trade.pnl_amount} €
+            </p>
+          )}
+
+          {trade.description && (
+            <div>
+              <p className="text-xs uppercase tracking-wide text-slate-500 mb-1">Descrizione</p>
+              <p className="text-sm text-slate-300 whitespace-pre-line leading-relaxed">{trade.description}</p>
+            </div>
+          )}
+
+          {trade.lessons && (
+            <div className="border-l-2 border-violet-500/40 pl-3">
+              <p className="text-xs uppercase tracking-wide text-violet-400 mb-1">Lezioni</p>
+              <p className="text-sm text-slate-300 whitespace-pre-line leading-relaxed">{trade.lessons}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
