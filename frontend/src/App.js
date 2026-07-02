@@ -3,7 +3,6 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 import { LangProvider } from "@/context/LangContext";
 import { AuthProvider } from "@/context/AuthContext";
 import Header from "@/components/Header";
-import TickerBanner from "@/components/TickerBanner";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import Stats from "@/components/Stats";
@@ -20,7 +19,6 @@ function MainSite() {
     <LangProvider>
       <div className="min-h-screen bg-[#09090B]" data-testid="app-root">
         <Header />
-        <TickerBanner />
         <main>
           <Hero />
           <Services />

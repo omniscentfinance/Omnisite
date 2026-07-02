@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, ArrowRight, Globe, UserCircle } from "lucide-react";
 import { useLang } from "@/context/LangContext";
 import { useAuth } from "@/context/AuthContext";
+import TickerBanner from "@/components/TickerBanner";
 
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_orderflow-academy/artifacts/64cx6deb_1.png";
 
@@ -113,6 +114,8 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      <TickerBanner />
 
       {mobileOpen && (
         <div
