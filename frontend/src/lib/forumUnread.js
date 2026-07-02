@@ -2,12 +2,13 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 
 const KEY = "forum_last_read";
+const POLL_MS = 20000;
 
 function loadReads() {
   try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
 }
 function saveReads(reads) {
-  localStorage.setItem(KEY, JSON.stringify(reads));
+  try { localStorage.setItem(KEY, JSON.stringify(reads)); } catch { /* ignore quota errors */ }
 }
 
 export function markChannelRead(channelId, iso = new Date().toISOString()) {
@@ -34,17 +35,18 @@ async function getLatestPerChannel() {
   }
 }
 
-let watchCount = 0;
-
 // Hook: { unreadChannelIds: Set, hasUnread: bool, refresh, markRead(channelId) }
-// Si aggiorna in realtime quando arriva un nuovo messaggio in un canale qualsiasi.
+// Controlla periodicamente (polling, nessun canale realtime) se ci sono
+// messaggi più recenti dell'ultima lettura salvata in localStorage.
 export function useForumUnread() {
   const [unreadChannelIds, setUnreadChannelIds] = useState(new Set());
   const reads = useRef(loadReads());
+  const mounted = useRef(true);
 
   const refresh = useCallback(async () => {
     reads.current = loadReads();
     const latest = await getLatestPerChannel();
+    if (!mounted.current) return;
     const next = new Set();
     for (const [channelId, ts] of Object.entries(latest)) {
       const lastRead = reads.current[channelId];
@@ -54,21 +56,10 @@ export function useForumUnread() {
   }, []);
 
   useEffect(() => {
+    mounted.current = true;
     refresh();
-    // Nome canale univoco per istanza: evita che due componenti montati
-    // insieme (es. Sidebar + pagina Forum) condividano lo stesso canale
-    // realtime e se lo distruggano a vicenda allo smontaggio.
-    const topic = `forum-unread-watch-${watchCount++}`;
-    let sub;
-    try {
-      sub = supabase
-        .channel(topic)
-        .on("postgres_changes", { event: "INSERT", schema: "public", table: "forum_messages" }, () => refresh())
-        .subscribe();
-    } catch {
-      sub = null;
-    }
-    return () => { if (sub) supabase.removeChannel(sub); };
+    const interval = setInterval(refresh, POLL_MS);
+    return () => { mounted.current = false; clearInterval(interval); };
   }, [refresh]);
 
   const markRead = useCallback((channelId) => {
