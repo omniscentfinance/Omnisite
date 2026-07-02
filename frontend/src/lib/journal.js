@@ -2,6 +2,21 @@ import { supabase } from "@/lib/supabase";
 
 export const BUCKET = "journal";
 
+function isHeic(file) {
+  return /heic|heif/i.test(file.type) || /\.(heic|heif)$/i.test(file.name || "");
+}
+
+// Converte HEIC/HEIF (foto iPhone) in JPEG: i browser non Safari non
+// riescono a mostrare .heic in un tag <img>.
+export async function toDisplayableImage(file) {
+  if (!isHeic(file)) return file;
+  const heic2any = (await import("heic2any")).default;
+  const converted = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.9 });
+  const jpegBlob = Array.isArray(converted) ? converted[0] : converted;
+  const name = (file.name || "image").replace(/\.(heic|heif)$/i, "") + ".jpg";
+  return new File([jpegBlob], name, { type: "image/jpeg" });
+}
+
 function ymd(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
@@ -84,6 +99,7 @@ export async function deleteTrade(id) {
 
 // Carica uno screenshot nel bucket e restituisce l'URL pubblico.
 export async function uploadImage(file) {
+  file = await toDisplayableImage(file);
   const { data: { user } } = await supabase.auth.getUser();
   const ext = file.name.split(".").pop();
   const path = `${user.id}/${crypto.randomUUID()}.${ext}`;

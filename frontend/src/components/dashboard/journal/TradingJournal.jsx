@@ -3,7 +3,7 @@ import {
   ChevronLeft, ChevronRight, Plus, X, Trash2, Pencil, ImagePlus, Loader2,
   TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Minus,
 } from "lucide-react";
-import { listMonthTrades, createTrade, updateTrade, deleteTrade, uploadImage, dateKey, listStudents } from "@/lib/journal";
+import { listMonthTrades, createTrade, updateTrade, deleteTrade, uploadImage, dateKey, listStudents, toDisplayableImage } from "@/lib/journal";
 import { useAuth } from "@/context/AuthContext";
 import EquityChart from "./EquityChart";
 
@@ -331,9 +331,12 @@ function TradeModal({ date, trade, onClose, onSaved }) {
 
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
-  const onFile = (e) => {
+  const onFile = async (e) => {
     const f = e.target.files?.[0];
-    if (f) { setFile(f); setPreview(URL.createObjectURL(f)); }
+    if (!f) return;
+    const displayable = await toDisplayableImage(f);
+    setFile(displayable);
+    setPreview(URL.createObjectURL(displayable));
   };
 
   const save = async () => {
