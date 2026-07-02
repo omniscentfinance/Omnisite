@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, CalendarDays, Radio, MessagesSquare, Lock, Zap } from "lucide-react";
+import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, CalendarDays, Radio, MessagesSquare, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/dashboard/Sidebar";
 import ServiceCard from "@/components/dashboard/ServiceCard";
@@ -14,6 +14,7 @@ import CoursesSection from "@/components/dashboard/courses/CoursesSection";
 import TradingJournal from "@/components/dashboard/journal/TradingJournal";
 import MacroNews from "@/components/dashboard/MacroNews";
 import Forum from "@/components/dashboard/Forum";
+import IndicatoriBot from "@/components/dashboard/IndicatoriBot";
 
 const SVC = {
   base: [
@@ -98,18 +99,6 @@ function DashboardHome({ onUpgrade }) {
 
       {/* Banner live giornaliera */}
       <LiveBanner onUpgrade={onUpgrade} />
-    </div>
-  );
-}
-
-function ComingSoon({ title }) {
-  return (
-    <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
-      <div className="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mb-4">
-        <Zap size={22} className="text-violet-400" />
-      </div>
-      <h2 className="text-lg font-semibold text-white mb-2" style={{ fontFamily: "'Outfit', sans-serif" }}>{title}</h2>
-      <p className="text-slate-500 text-sm">Sezione in arrivo. Stiamo preparando i contenuti per te.</p>
     </div>
   );
 }
@@ -258,7 +247,7 @@ export default function Dashboard() {
             />
             <Route
               path="indicatori-bot"
-              element={<ProtectedSection><ComingSoon title="Indicatori & Bot" /></ProtectedSection>}
+              element={<ProtectedSection><IndicatoriBot /></ProtectedSection>}
             />
             <Route
               path="calendario"
