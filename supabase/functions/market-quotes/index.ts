@@ -6,7 +6,7 @@
 const TWELVE_DATA_KEY = Deno.env.get("TWELVE_DATA_API_KEY")!;
 
 // Simboli consentiti (allowlist) -> evita che il proxy venga usato per altro.
-// Alcuni indici (es. VIX, DXY spot, XAG/USD) non sono nel piano free di
+// Alcuni indici (es. DXY spot, XAG/USD) non sono nel piano free di
 // Twelve Data: usiamo ETF/coppie equivalenti disponibili gratuitamente.
 const SYMBOLS: Record<string, { symbol: string; label: string }> = {
   nasdaq: { symbol: "QQQ", label: "Nasdaq" },
@@ -16,7 +16,6 @@ const SYMBOLS: Record<string, { symbol: string; label: string }> = {
   silver: { symbol: "SLV", label: "Silver/USD" },
   eurusd: { symbol: "EUR/USD", label: "EUR/USD" },
   dxy: { symbol: "UUP", label: "DXY" },
-  vix: { symbol: "VIXY", label: "VIX" },
   wti: { symbol: "USO", label: "WTI" },
 };
 
