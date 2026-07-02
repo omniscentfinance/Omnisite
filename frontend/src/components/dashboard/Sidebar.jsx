@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, CalendarClock, Radio, MessagesSquare, Users, Lock, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useForumUnread } from "@/lib/forumUnread";
 
 const DASHBOARD_ITEM = { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, free: true, end: true };
 
@@ -40,9 +41,11 @@ export default function Sidebar({ onClose }) {
   const admin = isAdmin();
   const paid = hasPaidPlan();
   const plan = effectivePlan();
+  const { hasUnread: forumUnread } = useForumUnread();
 
   const renderItem = ({ to, label, icon: Icon, free, end, mentorOnly, adminOnly, paidOnly, glow, spacer }) => {
     const locked = paidOnly ? !paid : (!free && !mentorOnly && !adminOnly && !active);
+    const showUnreadDot = to === "/dashboard/forum" && !locked && forumUnread;
     const link = (
       <NavLink
         to={to}
@@ -58,7 +61,12 @@ export default function Sidebar({ onClose }) {
           }`
         }
       >
-        <Icon size={16} className={`flex-shrink-0 ${glow ? "text-red-500" : ""}`} />
+        <span className="relative flex-shrink-0">
+          <Icon size={16} className={glow ? "text-red-500" : ""} />
+          {showUnreadDot && (
+            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-violet-400 ring-2 ring-[#111113]" />
+          )}
+        </span>
         <span className="flex-1 font-medium">{label}</span>
         {locked && <Lock size={13} className="text-slate-500" />}
       </NavLink>

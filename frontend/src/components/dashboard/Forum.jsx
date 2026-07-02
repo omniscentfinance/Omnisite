@@ -3,6 +3,7 @@ import { Hash, Plus, Send, Trash2, Loader2, X, Lock, ImagePlus, MessagesSquare }
 import { supabase } from "@/lib/supabase";
 import { uploadImage } from "@/lib/journal";
 import { useAuth } from "@/context/AuthContext";
+import { useForumUnread } from "@/lib/forumUnread";
 
 function timeAgo(iso) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -19,6 +20,7 @@ export default function Forum() {
   const [active, setActive] = useState(null);
   const [loadingCh, setLoadingCh] = useState(true);
   const [creating, setCreating] = useState(false);
+  const { unreadChannelIds, markRead } = useForumUnread();
 
   const loadChannels = useCallback(async () => {
     setLoadingCh(true);
@@ -28,6 +30,8 @@ export default function Forum() {
     setLoadingCh(false);
   }, []);
   useEffect(() => { loadChannels(); }, [loadChannels]);
+
+  useEffect(() => { if (active) markRead(active.id); }, [active, markRead]);
 
   const canPost = active && (!active.admin_only_post || admin);
 
@@ -60,6 +64,9 @@ export default function Forum() {
                   }`}>
                   {c.admin_only_post ? <Lock size={13} className="flex-shrink-0" /> : <Hash size={14} className="flex-shrink-0" />}
                   <span className="flex-1 text-left truncate">{c.name}</span>
+                  {unreadChannelIds.has(c.id) && active?.id !== c.id && (
+                    <span className="w-2 h-2 rounded-full bg-violet-400 flex-shrink-0" />
+                  )}
                 </button>
               ))}
             </div>
