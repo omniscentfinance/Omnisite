@@ -36,8 +36,8 @@ export default function Header() {
   return (
     <header
       data-testid="site-header"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-header shadow-sm" : "bg-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 bg-black transition-all duration-300 ${
+        scrolled ? "shadow-sm" : ""
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
