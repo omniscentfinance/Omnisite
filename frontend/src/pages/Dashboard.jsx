@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, CalendarDays, Radio, MessagesSquare, Lock } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -16,6 +16,7 @@ import MacroNews from "@/components/dashboard/MacroNews";
 import Forum from "@/components/dashboard/Forum";
 import IndicatoriBot from "@/components/dashboard/IndicatoriBot";
 import OnboardingChecklist from "@/components/dashboard/OnboardingChecklist";
+import { listSectionVideos, getWatchedVideoIds } from "@/lib/courses";
 
 const SVC = {
   base: [
@@ -54,11 +55,32 @@ function LockedTier({ title, desc, onUpgrade }) {
   );
 }
 
+// % di video visti in una sezione (base/private), per mostrare l'avanzamento sulle card.
+function useSectionProgress(section) {
+  const [pct, setPct] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [videos, watched] = await Promise.all([listSectionVideos(section), getWatchedVideoIds()]);
+        if (cancelled) return;
+        setPct(videos.length ? Math.round((videos.filter((v) => watched.has(v.id)).length / videos.length) * 100) : null);
+      } catch { if (!cancelled) setPct(null); }
+    })();
+    return () => { cancelled = true; };
+  }, [section]);
+  return pct;
+}
+
 function DashboardHome({ onUpgrade }) {
   const { profile, hasAdvanced, isMentorshipActive } = useAuth();
   const adv = hasAdvanced();
   const master = isMentorshipActive();
   const firstName = profile?.full_name?.split(" ")[0] || "Utente";
+  const baseProgress = useSectionProgress("base");
+  const privateProgress = useSectionProgress("private");
+
+  const progressBySvc = { "corso-base": baseProgress, "corsi-privati": privateProgress };
 
   const activeServices = [
     ...SVC.base,
@@ -81,7 +103,7 @@ function DashboardHome({ onUpgrade }) {
       {/* Servizi attivi */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {activeServices.map((s) => (
-          <ServiceCard key={s.id} label={s.label} icon={s.icon} unlocked to={s.to} onUpgrade={onUpgrade} />
+          <ServiceCard key={s.id} label={s.label} icon={s.icon} unlocked to={s.to} onUpgrade={onUpgrade} progress={progressBySvc[s.id]} />
         ))}
       </div>
 

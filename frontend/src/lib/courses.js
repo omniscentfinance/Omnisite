@@ -142,6 +142,16 @@ export async function getWatchedVideoIds() {
   return new Set((data ?? []).map((r) => r.video_id));
 }
 
+// Video di una sezione (base/private) con playlist di appartenenza, per calcolare l'avanzamento complessivo.
+export async function listSectionVideos(section) {
+  const { data, error } = await supabase
+    .from("videos")
+    .select("id, playlist_id, playlists!inner(section)")
+    .eq("playlists.section", section);
+  if (error) throw error;
+  return data ?? [];
+}
+
 // Admin: numero di video visti per ciascun utente -> Map(user_id -> count).
 export async function getWatchedCountsByUser() {
   const { data, error } = await supabase.from("video_progress").select("user_id");

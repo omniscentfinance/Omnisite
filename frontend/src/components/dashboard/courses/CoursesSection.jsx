@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import {
   listPlaylists, createPlaylist, updatePlaylist, deletePlaylist,
   listVideos, createVideo, updateVideo, deleteVideo, parseYouTubeId,
-  markWatched, getWatchedVideoIds,
+  markWatched, getWatchedVideoIds, listSectionVideos,
 } from "@/lib/courses";
 import Quiz from "./Quiz";
 import Comments from "./Comments";
@@ -36,15 +36,30 @@ function PlaylistsView({ section, admin, onUpgrade, onOpen }) {
   const isBase = section === "base";
   const showPromo = isBase && !hasAdvanced(); // upsell solo per chi non ha già i premium
   const [playlists, setPlaylists] = useState([]);
+  const [videosByPlaylist, setVideosByPlaylist] = useState({});
+  const [watched, setWatched] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null); // playlist obj or {} for new
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { setPlaylists(await listPlaylists(section)); } catch { setPlaylists([]); }
+    try {
+      const [pls, sectionVideos, w] = await Promise.all([
+        listPlaylists(section), listSectionVideos(section), getWatchedVideoIds(),
+      ]);
+      setPlaylists(pls);
+      setWatched(w);
+      const byPlaylist = {};
+      for (const v of sectionVideos) (byPlaylist[v.playlist_id] ||= []).push(v);
+      setVideosByPlaylist(byPlaylist);
+    } catch { setPlaylists([]); }
     setLoading(false);
   }, [section]);
   useEffect(() => { load(); }, [load]);
+
+  const allVideos = Object.values(videosByPlaylist).flat();
+  const totalWatched = allVideos.filter((v) => watched.has(v.id)).length;
+  const overallPct = allVideos.length ? Math.round((totalWatched / allVideos.length) * 100) : 0;
 
   return (
     <div className="max-w-4xl">
@@ -81,30 +96,58 @@ function PlaylistsView({ section, admin, onUpgrade, onOpen }) {
         </div>
       )}
 
+      {!loading && allVideos.length > 0 && (
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Avanzamento corso</span>
+            <span className="text-xs text-slate-400">{totalWatched}/{allVideos.length} video · {overallPct}%</span>
+          </div>
+          <div className="h-2 rounded-full bg-[#1E1E2A] overflow-hidden">
+            <div className="h-full bg-emerald-500 transition-all" style={{ width: `${overallPct}%` }} />
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="animate-spin text-violet-400" size={22} /></div>
       ) : playlists.length === 0 ? (
         <div className="text-center py-12 text-slate-500 text-sm">Nessuna playlist disponibile.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {playlists.map((p) => (
-            <div key={p.id} className="group bg-[#111113] border border-[#1E1E2A] rounded-xl p-5 hover:border-violet-500/40 transition-colors cursor-pointer"
-              onClick={() => onOpen(p)}>
-              <div className="flex items-start justify-between gap-2">
-                <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center mb-3">
-                  <ListVideo size={18} className="text-violet-400" />
+          {playlists.map((p) => {
+            const plVideos = videosByPlaylist[p.id] || [];
+            const plWatched = plVideos.filter((v) => watched.has(v.id)).length;
+            const plPct = plVideos.length ? Math.round((plWatched / plVideos.length) * 100) : 0;
+            return (
+              <div key={p.id} className="group bg-[#111113] border border-[#1E1E2A] rounded-xl p-5 hover:border-violet-500/40 transition-colors cursor-pointer"
+                onClick={() => onOpen(p)}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center mb-3">
+                    <ListVideo size={18} className="text-violet-400" />
+                  </div>
+                  {admin && (
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={(e) => { e.stopPropagation(); setEditing(p); }} className="text-slate-500 hover:text-white"><Pencil size={14} /></button>
+                      <button onClick={async (e) => { e.stopPropagation(); if (confirm("Eliminare la playlist e tutti i suoi video?")) { await deletePlaylist(p.id); load(); } }} className="text-slate-500 hover:text-red-400"><Trash2 size={14} /></button>
+                    </div>
+                  )}
                 </div>
-                {admin && (
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={(e) => { e.stopPropagation(); setEditing(p); }} className="text-slate-500 hover:text-white"><Pencil size={14} /></button>
-                    <button onClick={async (e) => { e.stopPropagation(); if (confirm("Eliminare la playlist e tutti i suoi video?")) { await deletePlaylist(p.id); load(); } }} className="text-slate-500 hover:text-red-400"><Trash2 size={14} /></button>
+                <p className="text-base font-semibold text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>{p.title}</p>
+                {p.description && <p className="text-sm text-slate-500 mt-1 line-clamp-2">{p.description}</p>}
+                {plVideos.length > 0 && (
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[11px] text-slate-500">{plWatched}/{plVideos.length} video</span>
+                      <span className="text-[11px] font-semibold text-emerald-400">{plPct}%</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-[#1E1E2A] overflow-hidden">
+                      <div className="h-full bg-emerald-500 transition-all" style={{ width: `${plPct}%` }} />
+                    </div>
                   </div>
                 )}
               </div>
-              <p className="text-base font-semibold text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>{p.title}</p>
-              {p.description && <p className="text-sm text-slate-500 mt-1 line-clamp-2">{p.description}</p>}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
