@@ -15,6 +15,7 @@ import TradingJournal from "@/components/dashboard/journal/TradingJournal";
 import MacroNews from "@/components/dashboard/MacroNews";
 import Forum from "@/components/dashboard/Forum";
 import IndicatoriBot from "@/components/dashboard/IndicatoriBot";
+import OnboardingChecklist from "@/components/dashboard/OnboardingChecklist";
 
 const SVC = {
   base: [
@@ -74,6 +75,8 @@ function DashboardHome({ onUpgrade }) {
         </h1>
         <p className="text-slate-400 text-sm">I tuoi servizi attivi.</p>
       </div>
+
+      <OnboardingChecklist onUpgrade={onUpgrade} />
 
       {/* Servizi attivi */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
