@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, CalendarDays, Radio, MessagesSquare, Lock } from "lucide-react";
+import { Menu, BookOpen, BookMarked, BarChart2, Bot, CalendarClock, CalendarDays, Radio, MessagesSquare, Lock, Gauge } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/dashboard/Sidebar";
 import ServiceCard from "@/components/dashboard/ServiceCard";
@@ -16,6 +16,7 @@ import MacroNews from "@/components/dashboard/MacroNews";
 import Forum from "@/components/dashboard/Forum";
 import IndicatoriBot from "@/components/dashboard/IndicatoriBot";
 import OnboardingChecklist from "@/components/dashboard/OnboardingChecklist";
+import CurrencyStrength from "@/components/dashboard/CurrencyStrength";
 import { listSectionVideos, getWatchedVideoIds } from "@/lib/courses";
 
 const SVC = {
@@ -29,6 +30,7 @@ const SVC = {
     { id: "indicatori-bot", label: "Indicatori & Bot", icon: Bot, to: "/dashboard/indicatori-bot" },
     { id: "forum", label: "Forum", icon: MessagesSquare, to: "/dashboard/forum" },
     { id: "live", label: "Live Trading", icon: Radio, to: "/dashboard/live-trading" },
+    { id: "forza-valute", label: "Forza Valute", icon: Gauge, to: "/dashboard/forza-valute" },
   ],
   master: [
     { id: "calendario", label: "Mentorship Privata", icon: CalendarDays, to: "/dashboard/calendario" },
@@ -273,6 +275,10 @@ export default function Dashboard() {
             <Route
               path="indicatori-bot"
               element={<ProtectedSection><IndicatoriBot /></ProtectedSection>}
+            />
+            <Route
+              path="forza-valute"
+              element={<ProtectedSection><CurrencyStrength /></ProtectedSection>}
             />
             <Route
               path="calendario"

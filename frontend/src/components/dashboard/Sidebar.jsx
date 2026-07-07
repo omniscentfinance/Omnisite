@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, CalendarClock, Radio, MessagesSquare, Users, Lock, LogOut, X } from "lucide-react";
+import { LayoutDashboard, BookOpen, BookMarked, BarChart2, Bot, CalendarDays, CalendarClock, Radio, MessagesSquare, Gauge, Users, Lock, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useForumUnread } from "@/lib/forumUnread";
 
@@ -14,6 +14,7 @@ const NAV = [
   { to: "/dashboard/corsi-privati", label: "Corsi Privati", icon: BookOpen, free: false, group: "advanced" },
   { to: "/dashboard/indicatori-bot", label: "Indicatori & Bot", icon: Bot, free: false, group: "advanced" },
   { to: "/dashboard/forum", label: "Forum", icon: MessagesSquare, paidOnly: true, group: "advanced" },
+  { to: "/dashboard/forza-valute", label: "Forza Valute", icon: Gauge, free: false, group: "advanced" },
   // Master + (mentorship private)
   { to: "/dashboard/calendario", label: "Prenota Sessione", icon: CalendarDays, mentorOnly: true, group: "master" },
 ];
