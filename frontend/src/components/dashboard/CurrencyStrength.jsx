@@ -86,6 +86,16 @@ export default function CurrencyStrength() {
   const b = latest.find((l) => l.currency === curB);
   const delta = a && b ? Math.round((a.strength - b.strength) * 100) / 100 : 0;
 
+  // Punteggio 0-100 relativo al gruppo di oggi (la più forte = 100, la più debole = 0),
+  // per una lettura rapida stile "STRONG/WEAK" indipendente dalla scala delle %.
+  const strengths = latest.map((l) => l.strength);
+  const minS = Math.min(...strengths);
+  const maxS = Math.max(...strengths);
+  const scoreOf = (val) => (maxS === minS ? 50 : Math.round(((val - minS) / (maxS - minS)) * 100));
+  const scoreA = a ? scoreOf(a.strength) : null;
+  const scoreB = b ? scoreOf(b.strength) : null;
+  const macroSpread = scoreA != null && scoreB != null ? scoreA - scoreB : null;
+
   return (
     <div className="max-w-4xl space-y-8">
       <div>
@@ -137,6 +147,43 @@ export default function CurrencyStrength() {
                 {currencies.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
+
+            {curA !== curB && scoreA != null && scoreB != null && (
+              <div className="mb-5">
+                <div className="flex items-baseline justify-between gap-3 mb-4">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white leading-none" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                    {curA}/{curB}
+                  </h3>
+                  <span className="text-sm font-semibold text-emerald-400">
+                    Macro Spread: {macroSpread >= 0 ? "+" : ""}{macroSpread}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[{ code: curA, score: scoreA }, { code: curB, score: scoreB }].map(({ code, score }) => {
+                    const strong = score >= 50;
+                    return (
+                      <div key={code} className={`rounded-xl border-l-4 bg-[#16161A] p-4 ${strong ? "border-l-violet-500" : "border-l-red-500"}`}>
+                        <div className="flex items-center justify-between mb-6">
+                          <span className="text-lg font-bold text-white">{code}</span>
+                          <span className={`text-sm font-semibold ${strong ? "text-emerald-400" : "text-red-400"}`}>
+                            {score >= 0 ? "+" : ""}{score}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`text-[11px] font-semibold uppercase tracking-wide ${strong ? "text-slate-300" : "text-red-400"}`}>
+                            {strong ? "Strong" : "Weak"}
+                          </span>
+                          <span className="text-sm font-semibold text-white">{score}</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-[#1E1E2A] overflow-hidden">
+                          <div className={`h-full transition-all ${strong ? "bg-violet-500" : "bg-slate-600"}`} style={{ width: `${score}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {curA === curB ? (
               <p className="text-sm text-slate-500">Scegli due valute diverse per confrontarle.</p>
