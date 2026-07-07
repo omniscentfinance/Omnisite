@@ -75,8 +75,13 @@ async function fetchPercentChanges(): Promise<Record<string, number>> {
   return changes;
 }
 
+// Ogni valuta compare in 7 delle 28 coppie: senza tutte e 7 il dato non è
+// affidabile (es. dopo un rate-limit parziale di Twelve Data), meglio
+// ometterlo che salvare un falso "0%".
+const PAIRS_PER_CURRENCY = 7;
+
 // Forza di ogni valuta = media delle variazioni % delle coppie in cui compare
-// (+ come base, - come quotata).
+// (+ come base, - come quotata). Ritorna solo le valute con dati completi.
 function computeStrength(changes: Record<string, number>) {
   const totals: Record<string, number> = {};
   const counts: Record<string, number> = {};
@@ -87,15 +92,18 @@ function computeStrength(changes: Record<string, number>) {
     totals[base] += pct; counts[base] += 1;
     totals[quote] -= pct; counts[quote] += 1;
   }
-  return CURRENCIES.map((currency) => ({
-    currency,
-    strength: counts[currency] ? Math.round((totals[currency] / counts[currency]) * 100) / 100 : 0,
-  }));
+  return CURRENCIES
+    .filter((currency) => counts[currency] === PAIRS_PER_CURRENCY)
+    .map((currency) => ({
+      currency,
+      strength: Math.round((totals[currency] / counts[currency]) * 100) / 100,
+    }));
 }
 
 async function refresh(supabase: ReturnType<typeof createClient>) {
   const changes = await fetchPercentChanges();
   const strengths = computeStrength(changes);
+  if (strengths.length === 0) throw new Error("Nessuna valuta con dati completi da Twelve Data: snapshot saltato.");
   const taken_at = new Date().toISOString();
   const { error } = await supabase
     .from("currency_strength_snapshot")
