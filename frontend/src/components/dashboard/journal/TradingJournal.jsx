@@ -345,12 +345,17 @@ function TradeModal({ date, trade, onClose, onSaved }) {
     try {
       let image_url = trade?.image_url || null;
       if (file) image_url = await uploadImage(file);
+      let pnl_amount = form.pnl_amount === "" ? 0 : parseFloat(String(form.pnl_amount).replace(",", ".")) || 0;
+      // Se l'esito è "loss" l'importo deve essere negativo (e viceversa per "win"):
+      // alcuni utenti dimenticano il segno, qui lo correggiamo automaticamente.
+      if (form.outcome === "loss" && pnl_amount > 0) pnl_amount = -pnl_amount;
+      else if (form.outcome === "win" && pnl_amount < 0) pnl_amount = -pnl_amount;
       const payload = {
         asset: form.asset.trim(),
         direction: form.direction,
         outcome: form.outcome,
         pnl: form.pnl.trim(),
-        pnl_amount: form.pnl_amount === "" ? 0 : parseFloat(String(form.pnl_amount).replace(",", ".")) || 0,
+        pnl_amount,
         description: form.description.trim(),
         lessons: form.lessons.trim(),
         image_url,
