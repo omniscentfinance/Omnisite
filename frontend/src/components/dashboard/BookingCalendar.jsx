@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Clock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { useAuth } from "@/context/AuthContext";
@@ -14,18 +14,41 @@ const EMAILJS_SERVICE_ID = "service_t060r7s";
 const EMAILJS_TEMPLATE_ID = "template_zw256co";
 const EMAILJS_PUBLIC_KEY = "Uk8xcFa3VjvjRAgAQ";
 
-// Finestra di disponibilità del mentor (modificabile qui).
+// Finestra di disponibilità del mentor, in orario CIVILE di Europe/Rome
+// (modificabile qui). Ogni visitatore la vede convertita nel proprio fuso
+// orario locale del browser (vedi zonedTimeToUtc più sotto).
 //   OPEN_HOUR  = prima ora prenotabile (inizio slot)
 //   CLOSE_HOUR = ultima ora prenotabile (inizio slot)
 //   AVAILABLE_DAYS = giorni prenotabili (0=Dom, 1=Lun ... 6=Sab)
 // Google Calendar rimuove poi gli slot già occupati.
+const MENTOR_TIMEZONE = "Europe/Rome";
 const OPEN_HOUR = 10;
 const CLOSE_HOUR = 22;
 const AVAILABLE_DAYS = [1, 2, 3, 4, 5]; // Lun-Ven (chiuso sabato e domenica)
-// Pausa di chiusura (in minuti dalla mezzanotte): 16:30 -> 20:30.
+// Pausa di chiusura (in minuti dalla mezzanotte, orario di Roma): 16:30 -> 20:30.
 // Gli slot che si sovrappongono a questa fascia vengono esclusi.
 const BREAK_START_MIN = 16 * 60 + 30;
 const BREAK_END_MIN = 20 * 60 + 30;
+
+// Converte un orario civile (wall-clock) in uno specifico fuso orario in un
+// istante UTC assoluto, gestendo automaticamente ora legale/solare. Senza
+// questo, un orario tipo "10:00" verrebbe interpretato nel fuso orario del
+// browser di chi visita la pagina invece che in quello del mentor (Europe/Rome),
+// facendo risultare bloccati/liberi gli slot sbagliati per chi non è in Italia.
+function zonedTimeToUtc(timeZone, year, month, day, hour, minute) {
+  const guess = Date.UTC(year, month, day, hour, minute, 0, 0);
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone, hour12: false,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+  });
+  const parts = Object.fromEntries(dtf.formatToParts(new Date(guess)).map((p) => [p.type, p.value]));
+  const renderedAsUtc = Date.UTC(
+    Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+    Number(parts.hour) % 24, Number(parts.minute), Number(parts.second),
+  );
+  return new Date(guess - (renderedAsUtc - guess));
+}
 
 const HOURS = [];
 for (let h = OPEN_HOUR; h <= CLOSE_HOUR; h++) {
@@ -89,11 +112,9 @@ export default function BookingCalendar() {
   }, [view.year, view.month, user]);
 
   // Uno slot è occupato se si sovrappone a un intervallo busy del calendario
-  const isSlotBusy = (date, time) => {
-    const [h, m] = time.split(":").map(Number);
-    const s = new Date(date); s.setHours(h, m, 0, 0);
-    const e = new Date(s.getTime() + SLOT_MINUTES * 60000);
-    return busy.some((b) => s < b.end && e > b.start);
+  const isSlotBusy = (utcStart) => {
+    const utcEnd = new Date(utcStart.getTime() + SLOT_MINUTES * 60000);
+    return busy.some((b) => utcStart < b.end && utcEnd > b.start);
   };
 
   useEffect(() => { loadMonth(); }, [loadMonth]);
@@ -122,22 +143,37 @@ export default function BookingCalendar() {
     setView({ year: view.year + Math.floor(m / 12), month: ((m % 12) + 12) % 12 });
   };
 
-  const slotsForSelected = selectedDay ? (WEEKLY_SLOTS[selectedDay.getDay()] || []) : [];
+  // Orari del mentor (Europe/Rome) per il giorno selezionato, convertiti in
+  // istanti UTC assoluti e poi mostrati nel fuso orario locale di chi visita.
+  const slotsForSelected = useMemo(() => {
+    if (!selectedDay) return [];
+    const romeHours = WEEKLY_SLOTS[selectedDay.getDay()] || [];
+    return romeHours.map((romeTime) => {
+      const [h, m] = romeTime.split(":").map(Number);
+      const utcStart = zonedTimeToUtc(
+        MENTOR_TIMEZONE, selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate(), h, m,
+      );
+      return {
+        romeTime,
+        utcStart,
+        localLabel: utcStart.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
+    });
+  }, [selectedDay]);
 
-  const handleBook = async (time) => {
+  const handleBook = async (slot) => {
     if (!canBook || booking) return;
     setPendingTime(null);
-    const [h, m] = time.split(":").map(Number);
-    const start = new Date(selectedDay);
-    start.setHours(h, m, 0, 0);
     setBooking(true);
     setFeedback(null);
     try {
-      await createBooking(start.toISOString());
-      // Notifica di prenotazione via EmailJS (non blocca la conferma se fallisce)
-      const when = start.toLocaleString("it-IT", {
+      await createBooking(slot.utcStart.toISOString());
+      // Notifica di prenotazione via EmailJS (non blocca la conferma se fallisce).
+      // Sempre in orario di Roma: la mail è per il mentor, non per il cliente.
+      const when = new Intl.DateTimeFormat("it-IT", {
+        timeZone: MENTOR_TIMEZONE,
         weekday: "long", day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit",
-      });
+      }).format(slot.utcStart);
       emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
@@ -255,14 +291,14 @@ export default function BookingCalendar() {
                 {DAY_NAMES[selectedDay.getDay()]} {selectedDay.getDate()} {MONTH_NAMES[selectedDay.getMonth()]}
               </p>
               <div className="space-y-2">
-                {slotsForSelected.map((time) => {
-                  const booked = isSlotBusy(selectedDay, time);
+                {slotsForSelected.map((slot) => {
+                  const booked = isSlotBusy(slot.utcStart);
                   const disabled = booked || !canBook || booking;
                   return (
                     <button
-                      key={time}
+                      key={slot.romeTime}
                       disabled={disabled}
-                      onClick={() => setPendingTime(time)}
+                      onClick={() => setPendingTime(slot)}
                       className={`w-full py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                         booked
                           ? "border-[#1E1E2A] text-slate-600 line-through cursor-not-allowed"
@@ -271,7 +307,7 @@ export default function BookingCalendar() {
                           : "border-violet-500/40 text-violet-300 hover:bg-violet-500/10"
                       }`}
                     >
-                      {time}{booked && " · occupato"}
+                      {slot.localLabel}{booked && " · occupato"}
                     </button>
                   );
                 })}
@@ -297,9 +333,9 @@ export default function BookingCalendar() {
             <p className="text-sm text-slate-400 mb-6">
               Stai per fissare una call per{" "}
               <strong className="text-slate-200">
-                {DAY_NAMES[selectedDay.getDay()]} {selectedDay.getDate()} {MONTH_NAMES[selectedDay.getMonth()]}
+                {pendingTime.utcStart.toLocaleDateString([], { weekday: "long", day: "2-digit", month: "long" })}
               </strong>{" "}
-              alle <strong className="text-slate-200">{pendingTime}</strong>.
+              alle <strong className="text-slate-200">{pendingTime.localLabel}</strong> (ora locale).
             </p>
             <div className="flex gap-3">
               <button
