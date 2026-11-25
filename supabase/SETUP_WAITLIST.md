@@ -36,6 +36,49 @@ create policy "waitlist delete admin" on public.waitlist
   for delete using (public.is_admin());
 ```
 
+## Notifiche "X si è appena iscritto" (iscrizioni reali)
+
+Il sito mostra in alto un avviso con le iscrizioni **vere** più recenti. Per farlo
+senza aprire la tabella in lettura, si usa una funzione `security definer` che
+ritorna **solo il nome di battesimo e l'orario** — mai l'email, mai il nome completo.
+
+Esegui anche questo:
+
+```sql
+create or replace function public.recent_waitlist_signups(max_rows int default 8)
+returns table (first_name text, joined_at timestamptz)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  -- Solo il primo token del nome: "Marco Rossi" -> "Marco".
+  select
+    initcap(split_part(btrim(w.name), ' ', 1)) as first_name,
+    w.created_at as joined_at
+  from public.waitlist w
+  where w.name is not null
+    and btrim(w.name) <> ''
+    and w.created_at > now() - interval '14 days'
+  order by w.created_at desc
+  limit least(greatest(max_rows, 1), 20);
+$$;
+
+grant execute on function public.recent_waitlist_signups(int) to anon, authenticated;
+```
+
+Cosa garantisce:
+- **Nessuna email esce mai dal database.** La funzione non seleziona la colonna.
+- **Solo il nome di battesimo**, con l'iniziale maiuscola.
+- Chi lascia il campo nome vuoto **non compare mai** tra le notifiche.
+- Solo iscrizioni degli **ultimi 14 giorni**: niente social proof stantia.
+
+Il sito mostra il **tempo reale** dell'iscrizione ("appena", "12 min fa", "ieri"):
+non dichiara mai "appena iscritto" per un'iscrizione vecchia.
+
+Se non esegui questa funzione, le notifiche semplicemente non compaiono: il resto
+del sito continua a funzionare.
+
 ## Perché non c'è una policy di SELECT per `anon`
 
 Il client inserisce con `supabase.from("waitlist").insert(...)` **senza** `.select()`:

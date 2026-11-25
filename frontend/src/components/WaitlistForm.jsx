@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2, Lock } from "lucide-react";
 import { useLang } from "@/context/LangContext";
-import { launchDateLabel, isEmail, joinWaitlist } from "@/lib/launch";
+import { launchDateLabel, isEmail, joinWaitlist, WAITLIST_JOINED_EVENT } from "@/lib/launch";
 
 /**
  * Form di iscrizione alla lista di lancio.
@@ -45,6 +45,8 @@ export default function WaitlistForm({ source = "site", className = "" }) {
     if (res.ok) {
       setStatus(res.already ? "already" : "success");
       setForm({ name: "", email: "", interest: "", consent: false });
+      // Il ticker ricarica subito, così la propria iscrizione compare davvero.
+      if (!res.already) window.dispatchEvent(new CustomEvent(WAITLIST_JOINED_EVENT));
       return;
     }
     setStatus("error");
