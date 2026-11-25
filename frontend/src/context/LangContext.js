@@ -327,7 +327,9 @@ const translations = {
       formTitle: "Iscriviti al lancio",
       formDesc:
         "Una sola email, il giorno dell'apertura. Chi è in lista entra prima e a condizioni riservate ai primi iscritti.",
-      name: "Nome",
+      // Avvisi di iscrizione reale (formulazione senza genere)
+      justJoined: "nuova iscrizione",
+      name: "Nome (facoltativo)",
       namePlaceholder: "Come ti chiami",
       email: "Email",
       emailPlaceholder: "la-tua@email.it",
@@ -353,7 +355,7 @@ const translations = {
       needConsent: "Serve il consenso per iscriverti.",
       errorMsg: "Iscrizione non riuscita. Riprova tra poco o scrivi a support@omniscent.space.",
       privacy:
-        "Usiamo l'indirizzo solo per avvisarti dell'apertura. Puoi chiedere la cancellazione in qualsiasi momento scrivendo a support@omniscent.space.",
+        "Usiamo l'indirizzo solo per avvisarti dell'apertura, e non lo mostriamo mai in pagina. Se lasci il nome, il solo nome di battesimo può comparire tra le iscrizioni recenti: lascia il campo vuoto se preferisci di no. Puoi chiedere la cancellazione in qualsiasi momento scrivendo a support@omniscent.space.",
       // Piani in stato non acquistabile
       tierBadge: "Al lancio",
       tierCta: "Iscriviti al lancio",
@@ -725,7 +727,8 @@ const translations = {
       formTitle: "Join the launch list",
       formDesc:
         "One email, on opening day. People on the list get in first, on terms reserved for early members.",
-      name: "Name",
+      justJoined: "just joined",
+      name: "Name (optional)",
       namePlaceholder: "Your name",
       email: "Email",
       emailPlaceholder: "your@email.com",
@@ -751,7 +754,7 @@ const translations = {
       needConsent: "Consent is required to join.",
       errorMsg: "Sign-up failed. Try again shortly or write to support@omniscent.space.",
       privacy:
-        "We use your address only to tell you about the opening. You can ask for removal at any time by writing to support@omniscent.space.",
+        "We use your address only to tell you about the opening, and never show it on the page. If you leave a name, your first name alone may appear among recent sign-ups: leave the field empty if you would rather it did not. You can ask for removal at any time by writing to support@omniscent.space.",
       tierBadge: "At launch",
       tierCta: "Join the launch list",
       tierNote: "Not purchasable yet",

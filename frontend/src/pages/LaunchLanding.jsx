@@ -3,6 +3,7 @@ import { ArrowRight, X } from "lucide-react";
 import { LangProvider, useLang } from "@/context/LangContext";
 import OrderBookLadder from "@/components/OrderBookLadder";
 import WaitlistForm from "@/components/WaitlistForm";
+import SignupTicker from "@/components/SignupTicker";
 import { useCountdown } from "@/hooks/useCountdown";
 import { LAUNCH_AT, launchDateLabel } from "@/lib/launch";
 
@@ -93,6 +94,9 @@ function LaunchLandingContent() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-base)] grain flex flex-col" data-testid="launch-landing">
+      {/* Iscrizioni reali, in alto. Se non c'è ancora nessuno, non mostra nulla. */}
+      <SignupTicker />
+
       {/* Niente navbar: solo il marchio e il tasto di iscrizione. */}
       <header className="relative z-20 w-full">
         <div className="max-w-[1180px] mx-auto px-6 lg:px-10 h-[86px] flex items-center justify-between gap-4">

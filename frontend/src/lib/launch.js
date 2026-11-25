@@ -60,3 +60,23 @@ export async function joinWaitlist({ email, name = "", interest = "", lang = "it
 
   return { ok: false, already: false, error };
 }
+
+/** Evento interno: il ticker delle iscrizioni si aggiorna appena qualcuno si iscrive. */
+export const WAITLIST_JOINED_EVENT = "waitlist:joined";
+
+/**
+ * Iscrizioni recenti da mostrare in pagina.
+ *
+ * Passa dalla funzione `recent_waitlist_signups`, che ritorna SOLO nome di
+ * battesimo e orario: le email non lasciano mai il database. Se la funzione non
+ * è stata ancora creata su Supabase, torna lista vuota e il sito non mostra nulla.
+ */
+export async function fetchRecentSignups(limit = 8) {
+  const { data, error } = await supabase.rpc("recent_waitlist_signups", { max_rows: limit });
+  if (error || !Array.isArray(data)) return [];
+
+  return data
+    .filter((r) => r && r.first_name && r.joined_at)
+    .map((r) => ({ name: String(r.first_name).trim(), at: new Date(r.joined_at) }))
+    .filter((r) => r.name && !Number.isNaN(r.at.getTime()));
+}
