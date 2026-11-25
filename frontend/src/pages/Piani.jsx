@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import { Check, X, ArrowRight, Lock } from "lucide-react";
+import { Check, X, ArrowRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Chatbot from "@/components/Chatbot";
 import { LangProvider, useLang } from "@/context/LangContext";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { LAUNCH_MODE, launchDateLabel } from "@/lib/launch";
 
 const RAIL = ["33%", "66%", "100%"];
 
@@ -24,9 +23,8 @@ function Cell({ value, sub, highlight }) {
 }
 
 function PianiContent() {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const p = t.plans;
-  const L = t.launch;
   const tiersRef = useScrollReveal();
   const cmpRef = useScrollReveal();
   const pathRef = useScrollReveal();
@@ -34,11 +32,9 @@ function PianiContent() {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  /* In modalità lancio niente è acquistabile: ogni CTA porta alla lista. */
   const contact = () => {
     window.location.hash = "/";
-    const anchor = LAUNCH_MODE ? "#lancio" : "#contact";
-    setTimeout(() => document.querySelector(anchor)?.scrollIntoView({ behavior: "smooth" }), 250);
+    setTimeout(() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" }), 250);
   };
 
   return (
@@ -47,10 +43,7 @@ function PianiContent() {
 
       <main>
         {/* Hero */}
-        <section
-          className={`relative pb-16 overflow-hidden text-center ${LAUNCH_MODE ? "pt-[206px]" : "pt-[172px]"}`}
-          data-testid="piani-hero"
-        >
+        <section className="relative pt-[172px] pb-16 overflow-hidden text-center" data-testid="piani-hero">
           <div className="grid-bg" />
           <div className="blob blob-violet -top-[30%] left-1/2 -translate-x-1/2" />
           <div className="blob blob-cyan -bottom-[40%] -right-[10%]" />
@@ -72,34 +65,7 @@ function PianiContent() {
                   {s}
                 </span>
               ))}
-              {LAUNCH_MODE && (
-                <span className="mono flex items-center gap-[7px] text-[10px] tracking-[0.13em] uppercase text-[var(--gold)]">
-                  <Lock size={11} className="shrink-0" />
-                  {L.scopeNote}
-                </span>
-              )}
             </div>
-
-            {/* Avviso di non disponibilità: sta prima dei prezzi, non dopo. */}
-            {LAUNCH_MODE && (
-              <div
-                data-testid="plans-launch-notice"
-                className="mt-9 mx-auto max-w-[70ch] rounded-[14px] border border-[rgba(227,179,65,0.3)] bg-[rgba(227,179,65,0.06)] px-7 py-6 text-left"
-              >
-                <p className="mono flex items-center gap-2.5 text-[10px] tracking-[0.17em] uppercase text-[var(--gold)] mb-3">
-                  <i className="pulse-dot w-1.5 h-1.5 rounded-full bg-[var(--gold)] shadow-[0_0_10px_var(--gold)]" />
-                  {L.barLabel} · {launchDateLabel(lang)}
-                </p>
-                <p className="text-sm leading-[1.7] text-[var(--fg-muted)]">{L.plansNotice}</p>
-                <button
-                  onClick={contact}
-                  data-testid="plans-notice-cta"
-                  className="btn-primary inline-flex items-center gap-2.5 min-h-[44px] px-5 rounded-[10px] text-[13px] font-semibold mt-5"
-                >
-                  {L.tierCta} <ArrowRight size={14} />
-                </button>
-              </div>
-            )}
           </div>
         </section>
 
@@ -111,9 +77,7 @@ function PianiContent() {
                 <article
                   key={tier.name}
                   data-testid={`tier-${i}`}
-                  className={`tier-card ${tier.featured ? "featured" : ""} ${
-                    LAUNCH_MODE ? "locked" : ""
-                  } px-[30px] pt-[34px] pb-8 flex flex-col scroll-reveal delay-${i + 1}`}
+                  className={`tier-card ${tier.featured ? "featured" : ""} px-[30px] pt-[34px] pb-8 flex flex-col scroll-reveal delay-${i + 1}`}
                 >
                   <span className="tier-rail" style={{ width: RAIL[i] }} />
                   {tier.badge && (
@@ -130,14 +94,8 @@ function PianiContent() {
                     {tier.what}
                   </p>
 
-                  {LAUNCH_MODE && <span className="launch-chip inline-block mb-3">{L.tierBadge}</span>}
-
                   <div className="flex items-baseline gap-2 flex-wrap mb-1.5">
-                    <span
-                      className={`text-[2.7rem] font-extralight tracking-[-0.045em] leading-none ${
-                        LAUNCH_MODE ? "price-locked" : "text-white"
-                      }`}
-                    >
+                    <span className="text-[2.7rem] font-extralight tracking-[-0.045em] text-white leading-none">
                       {tier.price}
                     </span>
                     <span className="mono text-[11.5px] text-[var(--fg-muted)]">{tier.per}</span>
@@ -168,10 +126,10 @@ function PianiContent() {
                     data-testid={`tier-cta-${i}`}
                     className={`${tier.featured ? "btn-primary" : "btn-secondary"} w-full min-h-[48px] rounded-[10px] text-sm font-semibold`}
                   >
-                    {LAUNCH_MODE ? L.tierCta : tier.cta}
+                    {tier.cta}
                   </button>
                   <p className="mono text-center text-[9.5px] tracking-[0.12em] uppercase text-[var(--fg-dim)] mt-4">
-                    {LAUNCH_MODE ? L.tierNote : tier.foot}
+                    {tier.foot}
                   </p>
                 </article>
               ))}
@@ -180,9 +138,7 @@ function PianiContent() {
             {/* Founding member */}
             <aside
               data-testid="founding-offer"
-              className={`founding-card ${
-                LAUNCH_MODE ? "locked" : ""
-              } rounded-[18px] px-8 py-9 mt-16 grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center scroll-reveal delay-3`}
+              className="founding-card rounded-[18px] px-8 py-9 mt-16 grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center scroll-reveal delay-3"
             >
               <div>
                 <p className="mono flex items-center gap-2.5 text-[10px] tracking-[0.18em] uppercase text-[var(--gold)] mb-3.5">
@@ -211,23 +167,18 @@ function PianiContent() {
               </div>
 
               <div className="text-center lg:min-w-[220px]">
-                {LAUNCH_MODE && <span className="launch-chip inline-block mb-3">{L.tierBadge}</span>}
-                <span
-                  className={`block text-[2.4rem] font-extralight tracking-[-0.04em] leading-none mb-2 ${
-                    LAUNCH_MODE ? "price-locked" : "text-white"
-                  }`}
-                >
+                <span className="block text-[2.4rem] font-extralight tracking-[-0.04em] text-white leading-none mb-2">
                   {p.founding.price}
                 </span>
                 <span className="mono block text-[9.5px] tracking-[0.12em] uppercase text-[var(--fg-dim)] mb-5">
-                  {LAUNCH_MODE ? L.tierNote : p.founding.priceNote}
+                  {p.founding.priceNote}
                 </span>
                 <button
                   onClick={contact}
                   data-testid="founding-cta"
                   className="btn-secondary w-full min-h-[48px] px-6 rounded-[10px] text-sm font-semibold border-[rgba(227,179,65,0.42)]"
                 >
-                  {LAUNCH_MODE ? L.tierCta : p.founding.cta}
+                  {p.founding.cta}
                 </button>
               </div>
             </aside>
@@ -340,22 +291,12 @@ function PianiContent() {
                   {p.cta.desc}
                 </p>
                 <div className="flex flex-wrap gap-3.5 justify-center mt-9">
-                  {LAUNCH_MODE ? (
-                    <button
-                      onClick={contact}
-                      data-testid="piani-cta-primary"
-                      className="btn-primary min-h-[48px] px-[26px] rounded-[10px] text-sm font-semibold inline-flex items-center gap-2.5"
-                    >
-                      {L.tierCta} <ArrowRight size={15} />
-                    </button>
-                  ) : (
-                    <a
-                      href="mailto:support@omniscent.space"
-                      className="btn-primary min-h-[48px] px-[26px] rounded-[10px] text-sm font-semibold inline-flex items-center gap-2.5"
-                    >
-                      {p.cta.primary} <ArrowRight size={15} />
-                    </a>
-                  )}
+                  <a
+                    href="mailto:support@omniscent.space"
+                    className="btn-primary min-h-[48px] px-[26px] rounded-[10px] text-sm font-semibold inline-flex items-center gap-2.5"
+                  >
+                    {p.cta.primary} <ArrowRight size={15} />
+                  </a>
                   <button
                     onClick={() => {
                       window.location.hash = "/";
