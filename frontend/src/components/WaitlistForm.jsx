@@ -1,38 +1,14 @@
 import { useState } from "react";
-import { ArrowRight, Check, CheckCircle2, Loader2, Lock } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, Lock } from "lucide-react";
 import { useLang } from "@/context/LangContext";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useCountdown } from "@/hooks/useCountdown";
-import { LAUNCH_AT, launchDateLabel, isEmail, joinWaitlist } from "@/lib/launch";
+import { launchDateLabel, isEmail, joinWaitlist } from "@/lib/launch";
 
-const pad = (n) => String(n).padStart(2, "0");
-
-function Countdown({ units, testId }) {
-  const c = useCountdown(LAUNCH_AT);
-  const cells = [
-    { v: c.days, l: units.days, pad: false },
-    { v: c.hours, l: units.hours, pad: true },
-    { v: c.minutes, l: units.minutes, pad: true },
-    { v: c.seconds, l: units.seconds, pad: true },
-  ];
-
-  return (
-    <div className="grid grid-cols-4 gap-2 sm:gap-2.5" data-testid={testId}>
-      {cells.map((cell) => (
-        <div key={cell.l} className="launch-tile px-2 py-4 sm:py-5 text-center">
-          <span className="mono block text-[clamp(1.5rem,5.5vw,2.3rem)] font-light leading-none tracking-[-0.02em] text-white">
-            {cell.pad ? pad(cell.v) : cell.v}
-          </span>
-          <span className="mono block text-[8.5px] sm:text-[9px] tracking-[0.16em] uppercase text-[var(--fg-dim)] mt-2.5">
-            {cell.l}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function WaitlistForm() {
+/**
+ * Form di iscrizione alla lista di lancio.
+ * `source` distingue da dove arriva l'iscrizione (home, piani, …): finisce
+ * nella colonna omonima della tabella waitlist e serve a capire cosa converte.
+ */
+export default function WaitlistForm({ source = "site", className = "" }) {
   const { t, lang } = useLang();
   const L = t.launch;
 
@@ -63,7 +39,7 @@ function WaitlistForm() {
       name: form.name,
       interest: form.interest,
       lang,
-      source: "site",
+      source,
     });
 
     if (res.ok) {
@@ -80,7 +56,7 @@ function WaitlistForm() {
     return (
       <div
         data-testid="waitlist-success"
-        className="launch-panel px-7 py-12 flex flex-col items-center justify-center text-center min-h-[340px]"
+        className={`launch-panel px-7 py-12 flex flex-col items-center justify-center text-center min-h-[340px] ${className}`}
         role="status"
       >
         <CheckCircle2 size={40} className="text-[var(--up)] mb-5" />
@@ -100,17 +76,21 @@ function WaitlistForm() {
   const loading = status === "loading";
 
   return (
-    <form onSubmit={submit} data-testid="waitlist-form" className="launch-panel px-6 sm:px-7 py-7">
+    <form
+      onSubmit={submit}
+      data-testid="waitlist-form"
+      className={`launch-panel px-6 sm:px-7 py-7 text-left ${className}`}
+    >
       <h3 className="text-lg font-normal tracking-tight text-white mb-2">{L.formTitle}</h3>
       <p className="text-[13px] leading-[1.65] text-[var(--fg-muted)] mb-7">{L.formDesc}</p>
 
       <div className="flex flex-col gap-4">
         <div>
-          <label htmlFor="wl-email" className="launch-label">
+          <label htmlFor={`wl-email-${source}`} className="launch-label">
             {L.email}
           </label>
           <input
-            id="wl-email"
+            id={`wl-email-${source}`}
             type="email"
             name="email"
             required
@@ -124,11 +104,11 @@ function WaitlistForm() {
         </div>
 
         <div>
-          <label htmlFor="wl-name" className="launch-label">
+          <label htmlFor={`wl-name-${source}`} className="launch-label">
             {L.name}
           </label>
           <input
-            id="wl-name"
+            id={`wl-name-${source}`}
             type="text"
             name="name"
             autoComplete="given-name"
@@ -141,11 +121,11 @@ function WaitlistForm() {
         </div>
 
         <div>
-          <label htmlFor="wl-interest" className="launch-label">
+          <label htmlFor={`wl-interest-${source}`} className="launch-label">
             {L.interest}
           </label>
           <select
-            id="wl-interest"
+            id={`wl-interest-${source}`}
             name="interest"
             value={form.interest}
             onChange={set("interest")}
@@ -175,11 +155,7 @@ function WaitlistForm() {
       </div>
 
       {status === "error" && (
-        <p
-          data-testid="waitlist-error"
-          role="alert"
-          className="text-[12.5px] text-[var(--down)] mt-5"
-        >
+        <p data-testid="waitlist-error" role="alert" className="text-[12.5px] text-[var(--down)] mt-5">
           {message}
         </p>
       )}
@@ -210,70 +186,5 @@ function WaitlistForm() {
         {L.privacy}
       </p>
     </form>
-  );
-}
-
-/**
- * Sezione di lancio: dice che la piattaforma non è disponibile, quanto manca
- * e raccoglie le iscrizioni. `#contact` resta come ancora: le vecchie CTA del
- * sito puntavano lì e continuano a funzionare.
- */
-export default function Launch() {
-  const { t, lang } = useLang();
-  const L = t.launch;
-  const ref = useScrollReveal();
-
-  return (
-    <section
-      id="lancio"
-      data-testid="launch-section"
-      className="relative py-24 lg:py-32 overflow-hidden scroll-mt-[170px]"
-      ref={ref}
-    >
-      {/* Vecchia ancora del sito: le CTA che puntavano a #contact continuano a funzionare. */}
-      <span id="contact" className="block scroll-mt-[170px]" aria-hidden="true" />
-      <div className="blob blob-violet -top-[30%] -left-[12%] opacity-70" />
-      <div className="blob blob-cyan -bottom-[34%] -right-[10%] opacity-60" />
-
-      <div className="relative z-10 max-w-[1240px] mx-auto px-6 lg:px-10 grid gap-14 lg:gap-20 lg:grid-cols-[1fr_0.86fr] lg:items-start">
-        {/* Colonna sinistra: il perché */}
-        <div className="scroll-reveal">
-          <p className="overline">
-            <span className="dot" />
-            {L.overline} · {launchDateLabel(lang)}
-          </p>
-
-          <h2 className="mt-5 text-[clamp(1.9rem,4.2vw,3.1rem)] font-light tracking-[-0.03em] leading-[1.04] text-white">
-            {L.title}
-            <br />
-            <span className="display-gradient">{L.titleAccent}</span>
-          </h2>
-
-          <p className="mt-6 max-w-[58ch] text-base lg:text-[1.05rem] leading-[1.75] text-[var(--fg-muted)]">
-            {L.lead}
-          </p>
-
-          <ul className="mt-11 flex flex-col">
-            {L.bullets.map((b) => (
-              <li key={b.t} className="flex gap-4 py-5 border-t border-[var(--line)] last:border-b">
-                <Check size={15} className="shrink-0 mt-1 text-[var(--violet-text)]" />
-                <div>
-                  <h3 className="text-[15px] font-medium tracking-tight text-[var(--fg)] mb-1.5">{b.t}</h3>
-                  <p className="text-[13.5px] leading-[1.7] text-[var(--fg-muted)] max-w-[56ch]">{b.d}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Colonna destra: countdown + iscrizione */}
-        {/* Niente sticky: l'overflow-hidden della sezione (serve a contenere i blob)
-            lo renderebbe inerte senza dare errore. */}
-        <div className="scroll-reveal delay-1 flex flex-col gap-5">
-          <Countdown units={L.units} testId="launch-countdown" />
-          <WaitlistForm />
-        </div>
-      </div>
-    </section>
   );
 }

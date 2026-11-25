@@ -3,8 +3,6 @@ import { Menu, X, ArrowRight, Globe, UserCircle } from "lucide-react";
 import { useLang } from "@/context/LangContext";
 import { useAuth } from "@/context/AuthContext";
 import TickerBanner from "@/components/TickerBanner";
-import LaunchBar from "@/components/LaunchBar";
-import { LAUNCH_MODE } from "@/lib/launch";
 
 const LOGO_URL = "/omniscent-logo.png";
 
@@ -45,17 +43,12 @@ export default function Header({ variant = "landing" }) {
     }
   };
 
-  /* In modalità lancio tutte le CTA del sito finiscono nella sezione #lancio:
-     non c'è nulla da comprare, c'è una lista a cui iscriversi. */
-  const target = LAUNCH_MODE ? "#lancio" : "#contact";
-  const ctaLabel = LAUNCH_MODE ? t.launch.navCta : t.nav.cta;
-
   const goContact = () => {
     setMobileOpen(false);
-    if (variant === "landing") scrollTo(target);
+    if (variant === "landing") scrollTo("#contact");
     else {
       window.location.hash = "/";
-      setTimeout(() => scrollTo(target), 250);
+      setTimeout(() => scrollTo("#contact"), 250);
     }
   };
 
@@ -65,8 +58,6 @@ export default function Header({ variant = "landing" }) {
 
   return (
     <header data-testid="site-header" className="fixed top-0 left-0 right-0 z-50 glass-header">
-      {LAUNCH_MODE && <LaunchBar onJoin={goContact} />}
-
       <div className="max-w-[1240px] mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-[84px]">
           <a
@@ -121,7 +112,7 @@ export default function Header({ variant = "landing" }) {
               data-testid="nav-cta-button"
               className="btn-primary hidden lg:inline-flex items-center gap-2 min-h-[42px] px-5 rounded-[10px] text-[13px] font-semibold"
             >
-              {ctaLabel} <ArrowRight size={14} />
+              {t.nav.cta} <ArrowRight size={14} />
             </button>
 
             <button
@@ -142,9 +133,7 @@ export default function Header({ variant = "landing" }) {
       {mobileOpen && (
         <div
           data-testid="mobile-menu"
-          className={`lg:hidden bg-[rgba(11,11,15,0.97)] backdrop-blur-xl border-t border-[var(--line)] px-6 py-5 overflow-y-auto ${
-            LAUNCH_MODE ? "max-h-[calc(100vh-144px)]" : "max-h-[calc(100vh-110px)]"
-          }`}
+          className="lg:hidden bg-[rgba(11,11,15,0.97)] backdrop-blur-xl border-t border-[var(--line)] px-6 py-5 max-h-[calc(100vh-110px)] overflow-y-auto"
         >
           <nav className="flex flex-col">
             {navLinks.map((link) => (
@@ -165,7 +154,7 @@ export default function Header({ variant = "landing" }) {
                 data-testid="mobile-nav-cta-button"
                 className="btn-primary min-h-[48px] px-6 rounded-[10px] text-sm font-semibold inline-flex items-center gap-2 justify-center"
               >
-                {ctaLabel} <ArrowRight size={14} />
+                {t.nav.cta} <ArrowRight size={14} />
               </button>
               <a
                 href={authLink.href}

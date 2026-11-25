@@ -291,6 +291,10 @@ const translations = {
       barLabel: "Piattaforma in arrivo",
       barOn: "dal",
       barCta: "Iscriviti",
+      // Home di lancio
+      pageTitle: "Omniscent — la piattaforma apre il 31 gennaio",
+      landingLead:
+        "Stiamo ricostruendo Omniscent da zero. Al momento non c'è nessun servizio attivo e nulla da acquistare: la piattaforma apre il 31 gennaio, e si entra solo dalla lista.",
       // Sezione #lancio
       overline: "Lancio",
       title: "La piattaforma non è ancora aperta.",
@@ -688,6 +692,9 @@ const translations = {
       barLabel: "Platform coming",
       barOn: "on",
       barCta: "Join",
+      pageTitle: "Omniscent — the platform opens 31 January",
+      landingLead:
+        "We are rebuilding Omniscent from scratch. There is no active service right now and nothing to buy: the platform opens on 31 January, and the only way in is the list.",
       overline: "Launch",
       title: "The platform isn't open yet.",
       titleAccent: "It opens 31 January.",
