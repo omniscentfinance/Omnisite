@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLang } from "@/context/LangContext";
+import { LAUNCH_MODE } from "@/lib/launch";
 
 const BASE = 1.08470;
 const ROWS = 6;
@@ -70,7 +71,9 @@ export default function Hero() {
     <section
       id="hero"
       data-testid="hero-section"
-      className="relative min-h-screen flex items-center overflow-hidden pt-[170px] pb-[90px]"
+      className={`relative min-h-screen flex items-center overflow-hidden pb-[90px] ${
+        LAUNCH_MODE ? "pt-[204px]" : "pt-[170px]"
+      }`}
     >
       <div className="grid-bg" />
       <div className="blob blob-violet -top-[14%] -left-[16%]" />
@@ -101,11 +104,15 @@ export default function Hero() {
 
           <div className="fade-in-up delay-300 mt-10 flex flex-wrap gap-3.5">
             <button
-              onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document
+                  .querySelector(LAUNCH_MODE ? "#lancio" : "#contact")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
               data-testid="hero-cta-button"
               className="btn-primary min-h-[48px] px-[26px] rounded-[10px] text-sm font-semibold inline-flex items-center gap-2.5"
             >
-              {t.hero.cta} <ArrowRight size={15} />
+              {LAUNCH_MODE ? t.launch.heroCta : t.hero.cta} <ArrowRight size={15} />
             </button>
             <button
               data-testid="hero-discover-button"

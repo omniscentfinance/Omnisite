@@ -10,8 +10,10 @@ import Stats from "@/components/Stats";
 import Testimonials from "@/components/Testimonials";
 import About from "@/components/About";
 import FAQ from "@/components/FAQ";
+import Launch from "@/components/Launch";
 import Footer from "@/components/Footer";
 import Chatbot from "@/components/Chatbot";
+import { LAUNCH_MODE } from "@/lib/launch";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Piani from "@/pages/Piani";
@@ -29,6 +31,7 @@ function MainSite() {
           <Testimonials />
           <About />
           <FAQ />
+          {LAUNCH_MODE && <Launch />}
         </main>
         <Footer />
         <Chatbot />

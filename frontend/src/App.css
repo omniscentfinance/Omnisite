@@ -437,6 +437,95 @@
   transition: all .3s var(--ease);
 }
 
+/* ─── Modalità lancio: barra in alto, countdown, iscrizione ─── */
+.launch-bar {
+  background: linear-gradient(90deg,
+    rgba(227, 179, 65, .10),
+    rgba(139, 92, 246, .11) 55%,
+    rgba(56, 189, 248, .07));
+  border-bottom: 1px solid var(--line);
+}
+.launch-tile {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(170deg, rgba(255, 255, 255, .052), rgba(255, 255, 255, .012));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.launch-panel {
+  border: 1px solid var(--line-hi);
+  border-radius: 16px;
+  background: linear-gradient(170deg, rgba(139, 92, 246, .075), rgba(255, 255, 255, .012) 58%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .42);
+}
+.launch-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  margin-bottom: 7px;
+}
+.launch-input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(8, 8, 10, .62);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.launch-input::placeholder { color: var(--fg-dim); }
+.launch-input:focus {
+  outline: none;
+  border-color: var(--violet-accent);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, .16);
+}
+select.launch-input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235A5F68' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+}
+select.launch-input option {
+  background: var(--bg-elev);
+  color: var(--fg);
+}
+
+/* Piano non ancora acquistabile: il prezzo resta leggibile ma visibilmente
+   spento, e la card perde il sollevamento al passaggio del mouse — niente
+   affordance di acquisto dove non si può acquistare. */
+.price-locked { color: var(--fg-muted); }
+.tier-card.locked:hover,
+.founding-card.locked:hover {
+  transform: none;
+  border-color: var(--line);
+  box-shadow: none;
+}
+.launch-chip {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(227, 179, 65, .38);
+  background: rgba(227, 179, 65, .1);
+  padding: 3px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
 /* ─── Accessibilità: rispetta la preferenza di movimento ridotto ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

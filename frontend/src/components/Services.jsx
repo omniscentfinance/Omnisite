@@ -2,6 +2,7 @@ import { TrendingUp, BarChart3, CreditCard, ArrowRight } from "lucide-react";
 import { useMemo } from "react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useLang } from "@/context/LangContext";
+import { LAUNCH_MODE } from "@/lib/launch";
 
 /** Volume profile + curva: astratto, ma è letteralmente ciò che insegniamo a leggere. */
 function OrderflowVisual() {
@@ -61,7 +62,9 @@ export default function Services() {
   const sectionRef = useScrollReveal();
   const { t } = useLang();
   const scrollToContact = () =>
-    document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
+    document
+      .querySelector(LAUNCH_MODE ? "#lancio" : "#contact")
+      ?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <section

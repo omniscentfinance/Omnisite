@@ -286,6 +286,81 @@ const translations = {
         secondary: "Rivedi il metodo",
       },
     },
+    launch: {
+      // Barra fissa in cima al sito
+      barLabel: "Piattaforma in arrivo",
+      barOn: "dal",
+      barCta: "Iscriviti",
+      // Sezione #lancio
+      overline: "Lancio",
+      title: "La piattaforma non è ancora aperta.",
+      titleAccent: "Apre il 31 gennaio.",
+      lead:
+        "Stiamo ricostruendo Omniscent da zero. Non un'altra libreria di video: un sistema che legge la tua operatività reale e ti dice, in euro, dove stai perdendo. Fino all'apertura non c'è nulla da comprare — si entra solo dalla lista.",
+      bullets: [
+        {
+          t: "Referto operativo",
+          d: "Carichi lo storico del tuo broker e ottieni la diagnosi: qualità di ingressi e uscite, consistenza del sizing, revenge trading, quanto ti è costato ogni errore ricorrente.",
+        },
+        {
+          t: "Contratto pre-trade",
+          d: "Le tue regole applicate prima di entrare, non raccontate dopo. Tesi, invalidazione, rischio massimo. Se stai violando il tuo stesso metodo, lo leggi in quel momento.",
+        },
+        {
+          t: "Drill su mercato storico",
+          d: "Ripetizioni misurate sulla singola decisione, con correzione immediata e la tua percentuale di accuratezza. Si impara facendo, non guardando.",
+        },
+        {
+          t: "Process Score",
+          d: "Un punteggio sull'aderenza al processo, non sui rendimenti: il P&L a tre mesi è rumore, il processo si misura in due settimane.",
+        },
+      ],
+      units: { days: "giorni", hours: "ore", minutes: "minuti", seconds: "secondi" },
+      openTitle: "La piattaforma è aperta.",
+      openDesc: "Il lancio è avvenuto. Entra con il tuo account o scrivici per l'accesso.",
+      openCta: "Vai al login",
+      // Form
+      formTitle: "Iscriviti al lancio",
+      formDesc:
+        "Una sola email, il giorno dell'apertura. Chi è in lista entra prima e a condizioni riservate ai primi iscritti.",
+      name: "Nome",
+      namePlaceholder: "Come ti chiami",
+      email: "Email",
+      emailPlaceholder: "la-tua@email.it",
+      interest: "Cosa ti interessa di più",
+      interests: [
+        { value: "referto", label: "Il referto sulla mia operatività" },
+        { value: "corso", label: "Imparare il metodo da zero" },
+        { value: "advanced", label: "Contesto di mercato continuo" },
+        { value: "coaching", label: "Lavoro uno-a-uno" },
+        { value: "curioso", label: "Sto solo guardando" },
+      ],
+      consent:
+        "Acconsento a ricevere un'email quando la piattaforma apre. Nessun altro uso del mio indirizzo.",
+      submit: "Iscrivimi alla lista",
+      sending: "Invio…",
+      noPayment: "Nessun pagamento ora · nessuna carta richiesta",
+      successTitle: "Sei in lista.",
+      successDesc:
+        "Ti scrivo il 31 gennaio, all'apertura. Nessuna email nel frattempo — è una promessa, non una formula.",
+      alreadyTitle: "C'eri già.",
+      alreadyDesc: "Questo indirizzo è in lista da prima. Ti avviso all'apertura.",
+      invalidEmail: "Controlla l'indirizzo email.",
+      needConsent: "Serve il consenso per iscriverti.",
+      errorMsg: "Iscrizione non riuscita. Riprova tra poco o scrivi a support@omniscent.space.",
+      privacy:
+        "Usiamo l'indirizzo solo per avvisarti dell'apertura. Puoi chiedere la cancellazione in qualsiasi momento scrivendo a support@omniscent.space.",
+      // Piani in stato non acquistabile
+      tierBadge: "Al lancio",
+      tierCta: "Iscriviti al lancio",
+      tierNote: "Non acquistabile ora",
+      scopeNote: "Non ancora disponibile",
+      plansNotice:
+        "Questi sono i livelli previsti all'apertura del 31 gennaio. Oggi non sono acquistabili: i prezzi sono indicativi e chi è in lista avrà condizioni riservate.",
+      // CTA sparse
+      navCta: "Iscriviti al lancio",
+      heroCta: "Iscriviti al lancio",
+    },
     contact: {
       overline: "Pronto a iniziare?",
       title: "Contattaci",
@@ -608,6 +683,76 @@ const translations = {
         primary: "Book the call",
         secondary: "Revisit the method",
       },
+    },
+    launch: {
+      barLabel: "Platform coming",
+      barOn: "on",
+      barCta: "Join",
+      overline: "Launch",
+      title: "The platform isn't open yet.",
+      titleAccent: "It opens 31 January.",
+      lead:
+        "We are rebuilding Omniscent from scratch. Not another video library: a system that reads your real trading record and tells you, in euros, where you are losing money. Nothing is for sale until opening day — the only way in is the list.",
+      bullets: [
+        {
+          t: "Trading audit",
+          d: "Upload your broker history and get the diagnosis: entry and exit quality, sizing consistency, revenge trading, and what each recurring mistake has actually cost you.",
+        },
+        {
+          t: "Pre-trade contract",
+          d: "Your rules applied before you enter, not recounted afterwards. Thesis, invalidation, maximum risk. If you are breaking your own method, you read it right then.",
+        },
+        {
+          t: "Historical market drills",
+          d: "Measured repetitions on a single decision, with immediate correction and your own accuracy rate. Skill comes from doing, not watching.",
+        },
+        {
+          t: "Process Score",
+          d: "A score on process adherence, not returns: three months of P&L is noise, process can be measured in two weeks.",
+        },
+      ],
+      units: { days: "days", hours: "hours", minutes: "minutes", seconds: "seconds" },
+      openTitle: "The platform is open.",
+      openDesc: "Launch has happened. Sign in with your account or write to us for access.",
+      openCta: "Go to login",
+      formTitle: "Join the launch list",
+      formDesc:
+        "One email, on opening day. People on the list get in first, on terms reserved for early members.",
+      name: "Name",
+      namePlaceholder: "Your name",
+      email: "Email",
+      emailPlaceholder: "your@email.com",
+      interest: "What interests you most",
+      interests: [
+        { value: "referto", label: "The audit of my own trading" },
+        { value: "corso", label: "Learning the method from scratch" },
+        { value: "advanced", label: "Continuous market context" },
+        { value: "coaching", label: "One-to-one work" },
+        { value: "curioso", label: "Just looking" },
+      ],
+      consent:
+        "I agree to receive one email when the platform opens. No other use of my address.",
+      submit: "Add me to the list",
+      sending: "Sending…",
+      noPayment: "No payment now · no card required",
+      successTitle: "You're on the list.",
+      successDesc:
+        "I'll write on 31 January, at opening. Nothing in between — that's a promise, not a formula.",
+      alreadyTitle: "You were already in.",
+      alreadyDesc: "This address joined earlier. We'll let you know at opening.",
+      invalidEmail: "Please check the email address.",
+      needConsent: "Consent is required to join.",
+      errorMsg: "Sign-up failed. Try again shortly or write to support@omniscent.space.",
+      privacy:
+        "We use your address only to tell you about the opening. You can ask for removal at any time by writing to support@omniscent.space.",
+      tierBadge: "At launch",
+      tierCta: "Join the launch list",
+      tierNote: "Not purchasable yet",
+      scopeNote: "Not available yet",
+      plansNotice:
+        "These are the levels planned for the 31 January opening. They cannot be bought today: prices are indicative and people on the list will get reserved terms.",
+      navCta: "Join the launch",
+      heroCta: "Join the launch",
     },
     contact: {
       overline: "Ready to start?",
